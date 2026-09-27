@@ -287,7 +287,7 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({
                 disabled={isLoading}
                 className="w-full bg-[#1b5e20] hover:bg-[#144919] text-white py-2.5 rounded-md text-xs font-bold transition-all cursor-pointer shadow-xs hover:shadow"
               >
-                {isLoading ? 'Authenticating...' : `Sign In as ${activeRole === 'admin' ? 'Administrator' : 'Operator'}`}
+                {isLoading ? 'Authenticating...' : `Sign In`}
               </button>
             </form>
           </div>
