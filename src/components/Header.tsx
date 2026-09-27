@@ -114,9 +114,7 @@ export const Header: React.FC<HeaderProps> = ({
               onClick={onOpenWipeModal}
               title="Admin Exclusive: Purge temporary session and app cache"
               className="hidden sm:inline-flex items-center gap-1.5 text-[11px] font-bold text-red-700 hover:text-red-800 bg-red-50 hover:bg-red-100 border border-red-200 hover:border-red-300 px-2.5 py-1.5 rounded-md transition-colors cursor-pointer"
-            >
-              <Trash2 className="w-3.5 h-3.5 text-red-600" />
-              <span>Wipe Cache</span>
+            > 
             </button>
           )} 
         </div>

@@ -39,15 +39,13 @@ export const Sidebar: React.FC<SidebarProps> = ({
       label: 'Status & Approvals',
       labelHindi: 'स्थिति एवं अनुमोदन',
       icon: <CheckSquare className="w-4 h-4 shrink-0" />,
-      badge: pendingApprovalsCount,
-      tag: 'Approval Desk',
+      badge: pendingApprovalsCount, 
     },
     {
       id: 'operator-management',
       label: 'Operator & MAC Devices',
       labelHindi: 'ऑपरेटर व डिवाइस प्रबंधन',
-      icon: <UserCheck className="w-4 h-4 shrink-0" />,
-      tag: 'Admin Only',
+      icon: <UserCheck className="w-4 h-4 shrink-0" />, 
     },
     {
       id: 'inventory-depot',
@@ -148,15 +146,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
 
         {/* Admin Only: Wipe Cache and System Temp Data Control */}
         {userRole === 'admin' && onOpenWipeModal && (
-          <div className="mt-5 pt-4 border-t border-stone-200">
-            <div className="bg-red-50/80 border border-red-200/90 rounded-lg p-3 space-y-2">
-              <div className="flex items-center gap-1.5 text-red-950 font-bold text-[11.5px]">
-                <ShieldAlert className="w-4 h-4 text-red-600 shrink-0" />
-                <span>Admin Cache Control</span>
-              </div>
-              <p className="text-[10px] text-stone-600 leading-tight">
-                Purge all temporary caches, form drafts, and session queues.
-              </p>
+          <div className="mt-5 pt-4 border-t border-stone-200"> 
               <button
                 type="button"
                 onClick={onOpenWipeModal}
@@ -164,8 +154,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
               >
                 <Trash2 className="w-3.5 h-3.5" />
                 <span>Wipe Cache Data</span>
-              </button>
-            </div>
+              </button> 
           </div>
         )}
 
