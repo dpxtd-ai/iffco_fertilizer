@@ -188,6 +188,9 @@ export const FarmerRegistrationView: React.FC<FarmerRegistrationViewProps> = ({
               <span className="text-stone-600 font-mono text-[11px]">
                 Ref: <strong className="text-stone-800 font-bold">MRT-POS-0419</strong>
               </span>
+              <h3 className="text-[15px] font-bold text-stone-800 mt-0.5">
+                Farmer Urea Pre-Registration Form
+              </h3>
             </div>
 
             {/* Big Headings */}
@@ -195,13 +198,7 @@ export const FarmerRegistrationView: React.FC<FarmerRegistrationViewProps> = ({
               <h2 className="text-[26px] font-extrabold text-[#164e23] tracking-tight leading-tight">
                 नवीन किसान यूरिया पूर्व-पंजीकरण फॉर्म
               </h2>
-            </marquee>
-            <h3 className="text-[15px] font-bold text-stone-800 mt-0.5">
-              Farmer Urea Pre-Registration Form
-            </h3>
-            <p className="text-xs text-stone-600 mt-1 max-w-2xl font-medium leading-relaxed">
-              Direct Benefit Transfer (DBT) integrated fertilizer allocation for verified landholder & tenant farmers under PM-PRANAM guidelines.
-            </p>
+            </marquee> 
           </div> 
         </div> 
       </div>
