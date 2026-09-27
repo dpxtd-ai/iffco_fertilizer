@@ -54,20 +54,10 @@ export const StatusApprovalsView: React.FC<StatusApprovalsViewProps> = ({
       {/* Top Banner */}
       <div className="bg-white rounded-lg border border-stone-200/90 p-5 shadow-2xs">
         <div className="flex flex-wrap items-center justify-between gap-3">
-          <div>
-            <div className="flex items-center gap-2 mb-1">
-              <span className="text-amber-800 bg-amber-50 px-2 py-0.5 rounded text-[10.5px] font-bold uppercase border border-amber-200/80">
-                DBT VERIFICATION QUEUE
-              </span>
-              <span className="text-stone-400">•</span>
-              <span className="text-xs text-stone-600 font-medium">Kendra Depot #104 Meerut</span>
-            </div>
+          <div> 
             <h2 className="text-2xl font-black text-[#1b431c] tracking-tight">
               स्थिति एवं अनुमोदन / Status & Approvals
-            </h2>
-            <p className="text-xs text-stone-600 font-medium">
-              Review, verify Aadhaar demographic fingerprints, and approve pending subsidized fertilizer quotas.
-            </p>
+            </h2> 
           </div>
 
           {/* Quick Counter Pills */}
