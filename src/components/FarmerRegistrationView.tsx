@@ -249,26 +249,7 @@ export const FarmerRegistrationView: React.FC<FarmerRegistrationViewProps> = ({
             <p className="text-xs text-stone-600 mt-1 max-w-2xl font-medium leading-relaxed">
               Direct Benefit Transfer (DBT) integrated subsidized fertilizer allocation for verified landholder & tenant farmers under PM-PRANAM guidelines.
             </p>
-          </div>
-
-          {/* Right Kendra Assignment Box */}
-          <div className="bg-[#f0f7f1] border border-emerald-300/80 rounded-lg p-3 flex items-center gap-3.5 shadow-2xs">
-            <div className="w-10 h-10 rounded-md bg-[#1b5e20] flex items-center justify-center text-white shrink-0">
-              <Truck className="w-5 h-5" />
-            </div>
-            <div>
-              <p className="text-[10px] font-bold text-emerald-900 uppercase tracking-wider">
-                KENDRA ASSIGNMENT
-              </p>
-              <p className="text-sm font-extrabold text-stone-900 leading-tight">
-                Meerut Depot #104
-              </p>
-              <div className="flex items-center gap-1.5 mt-0.5 text-[11px] text-emerald-800 font-semibold">
-                <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-                <span>Station Kendra: Active Desk</span>
-              </div>
-            </div>
-          </div>
+          </div> 
         </div> 
       </div>
 
