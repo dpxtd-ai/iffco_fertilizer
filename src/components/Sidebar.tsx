@@ -46,18 +46,18 @@ export const Sidebar: React.FC<SidebarProps> = ({
       label: 'Operator & MAC Devices',
       labelHindi: 'ऑपरेटर व डिवाइस प्रबंधन',
       icon: <UserCheck className="w-4 h-4 shrink-0" />, 
+    }, 
+    {
+      id: 'reports-logs',
+      label: 'Reports & DBT Logs',
+      labelHindi: 'रिपोर्ट्स व डीबीटी लॉग',
+      icon: <FileText className="w-4 h-4 shrink-0" />,
     },
     {
       id: 'inventory-depot',
       label: 'Inventory & Depot',
       labelHindi: 'भंडार एवं डिपो स्टॉक',
       icon: <Package className="w-4 h-4 shrink-0" />,
-    },
-    {
-      id: 'reports-logs',
-      label: 'Reports & DBT Logs',
-      labelHindi: 'रिपोर्ट्स व डीबीटी लॉग',
-      icon: <FileText className="w-4 h-4 shrink-0" />,
     },
   ];
 

@@ -44,19 +44,7 @@ export function getInitialOperators(): OperatorAccount[] {
       status: 'Active',
       createdAt: '2025-01-10',
       lastLogin: 'Active Today',
-    },
-    {
-      id: 'OP-102',
-      name: 'Rajeev Verma (Mobile Dispenser)',
-      userId: 'rajeev.op@iffco.gov.in',
-      password: 'Operator@2025',
-      contactNumber: '+91 98371 11200',
-      macAddress: '00:1A:2B:3C:4D:5E',
-      counterId: 'Sardhana Mobile Van #2',
-      status: 'Active',
-      createdAt: '2025-01-20',
-      lastLogin: 'Yesterday',
-    }
+    } 
   ];
 
   localStorage.setItem(STORAGE_KEY_OPERATORS, JSON.stringify(defaultList));
