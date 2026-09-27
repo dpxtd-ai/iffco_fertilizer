@@ -142,18 +142,10 @@ export const Header: React.FC<HeaderProps> = ({
             <span>
               Pre-Registrations Today: <strong className="text-stone-900 font-bold">{kpis.preRegistrationsToday.toLocaleString()}</strong>
             </span>
-            <span className="text-stone-300">|</span>
-            <span>
-              Urea Issued: <strong className="text-[#b43403] font-bold">{kpis.ureaIssuedBags.toLocaleString()} Bags</strong>
-            </span>
-            <span className="text-stone-300">|</span>
+            <span className="text-stone-300">|</span> 
             <span>
               Pending Approvals: <strong className="text-amber-700 font-bold">{kpis.pendingApprovals}</strong>
-            </span>
-            <span className="text-stone-300">|</span>
-            <span>
-              Buffer Stock: <strong className="text-emerald-800 font-bold">{kpis.bufferStockBags.toLocaleString()} Bags</strong>
-            </span>
+            </span> 
           </div>
         </div>
 

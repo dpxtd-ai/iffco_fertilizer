@@ -437,7 +437,7 @@ export const FarmerRegistrationView: React.FC<FarmerRegistrationViewProps> = ({
               <label className="block text-xs font-extrabold text-stone-900 mb-1">
                 Urea Bags Quantity / यूरिया की मात्रा (45 Kg Bags) <span className="text-red-500">*</span>
               </label>
-              <div className="w-36 bg-blue-50/70 border border-blue-200/70 rounded px-2.5 py-2 text-xs font-semibold text-blue-950 truncate">
+              <div>
                 <button
                   type="button"
                   onClick={() => handleQuantityChange((formData.quantityBags || 1) - 1)}
