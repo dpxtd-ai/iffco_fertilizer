@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { 
   CheckCircle2, 
-  Fingerprint, 
   ShieldCheck, 
   FileCheck, 
   RefreshCw, 
@@ -79,25 +78,7 @@ export const FarmerRegistrationView: React.FC<FarmerRegistrationViewProps> = ({
       quantityBags: validBags,
       nanoUreaBottles: nanoBottles,
     }));
-  };
-
-  // Format and mask Aadhaar input
-  const handleAadhaarChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const raw = e.target.value.replace(/\D/g, '').slice(0, 12);
-    let masked = '';
-    if (raw.length <= 4) {
-      masked = raw;
-    } else if (raw.length <= 8) {
-      masked = `XXXX - ${raw.slice(4)}`;
-    } else {
-      masked = `XXXX - XXXX - ${raw.slice(8)}`;
-    }
-    setFormData((prev) => ({
-      ...prev,
-      aadhaarNumber: raw,
-      aadhaarMasked: masked || 'XXXX - XXXX - 4829',
-    }));
-  };
+  }; 
 
   // Reset to empty / new registration
   const handleResetForm = () => {
@@ -126,35 +107,7 @@ export const FarmerRegistrationView: React.FC<FarmerRegistrationViewProps> = ({
       otpVerified: false,
     });
     setErrorMessage('');
-  };
-
-  // Preload Rameshwar Dayal Yadav sample
-  const handleLoadSample = () => {
-    setFormData({
-      nameAsPerAadhaar: 'Rameshwar Dayal Yadav',
-      nameHindi: 'रामेश्वर दयाल यादव',
-      aadhaarNumber: '482911094829',
-      aadhaarMasked: 'XXXX - XXXX - 4829',
-      dob: '1976-08-14',
-      age: 48,
-      gender: 'Male',
-      fatherOrHusbandName: 'Late Shri Hariram Yadav',
-      contactNumber: '+91 98372 45812',
-      pmKisanId: 'UP / 2024 / 984321',
-      quantityBags: 5,
-      nanoUreaBottles: 2,
-      cropType: 'Sugarcane',
-      landAcres: 2.0,
-      village: 'Sardhana Dehat',
-      tehsil: 'Sardhana',
-      district: 'Meerut',
-      state: 'Uttar Pradesh',
-      pinCode: '250342',
-      khasraNumber: '142/3-B',
-      biometricVerified: true,
-      otpVerified: true,
-    });
-  };
+  }; 
 
   // Form submission
   const handleSubmit = (e: React.FormEvent) => {
@@ -186,7 +139,7 @@ export const FarmerRegistrationView: React.FC<FarmerRegistrationViewProps> = ({
       id: `FR-${Date.now()}`,
       tokenNumber: `UP-MRT-2025-${formData.aadhaarNumber?.slice(-4) || randomSuffix}`,
       nameAsPerAadhaar: formData.nameAsPerAadhaar || 'Kisan Beneficiary',
-      nameHindi: formData.nameHindi || 'किसान लाभार्थी',
+      nameHindi: formData.nameHindi,
       aadhaarNumber: formData.aadhaarNumber || '',
       aadhaarMasked: formData.aadhaarMasked || formData.aadhaarNumber || '',
       dob: formData.dob || '1980-01-01',
@@ -219,8 +172,6 @@ export const FarmerRegistrationView: React.FC<FarmerRegistrationViewProps> = ({
   };
 
   const ureaBags = formData.quantityBags || 5;
-  const govtSubsidyTotal = (ureaBags * 2150).toLocaleString();
-  const farmerPayableTotal = (ureaBags * 266.5).toFixed(2);
 
   return (
     <div className="space-y-4">
