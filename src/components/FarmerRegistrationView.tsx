@@ -190,12 +190,7 @@ export const FarmerRegistrationView: React.FC<FarmerRegistrationViewProps> = ({
               </span>
             </div>
 
-            {/* Big Headings */}
-            <marquee direction="left">
-              <h2 className="text-[26px] font-extrabold text-[#164e23] tracking-tight leading-tight">
-                नवीन किसान यूरिया पूर्व-पंजीकरण फॉर्म
-              </h2>
-            </marquee>
+            {/* Big Headings */} 
             <h3 className="text-[15px] font-bold text-stone-800 mt-0.5">
               Farmer Urea Pre-Registration Form
             </h3>

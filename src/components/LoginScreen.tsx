@@ -150,6 +150,11 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({
             <h1 className="text-2xl font-black text-[#1b431c] tracking-tight">
               PM Kisan Urvarak Seva Portal
             </h1>
+            <marquee direction="left">
+              <h2 className="text-[26px] font-extrabold text-[#164e23] tracking-tight leading-tight">
+                नवीन किसान यूरिया पूर्व-पंजीकरण फॉर्म
+              </h2>
+            </marquee>
             <p className="text-xs text-stone-600 font-semibold uppercase tracking-wider">
               IFFCO Central Fertilizer Distribution System • Station Kendra Login
             </p>
