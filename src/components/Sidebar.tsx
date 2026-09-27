@@ -67,8 +67,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
       id: 'farmer-registration',
       label: 'Kisan Pre-Registration',
       labelHindi: 'कृषक पूर्व-पंजीकरण',
-      icon: <Users className="w-4 h-4 shrink-0" />,
-      tag: 'Operator Desk',
+      icon: <Users className="w-4 h-4 shrink-0" />, 
     },
   ];
 
@@ -147,17 +146,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
                 <span>Wipe Cache Data</span>
               </button> 
           </div>
-        )}
-
-        {/* Operator Note: Operator Can Do Only Kisan Registration */}
-        {userRole === 'operator' && (
-          <div className="mt-4 p-3 bg-emerald-50/80 border border-emerald-200/80 rounded-lg text-xs space-y-1">
-            <p className="font-bold text-emerald-950 text-[11px]">Operator Desk Policy</p>
-            <p className="text-[10.5px] text-stone-600 leading-snug">
-              This terminal is assigned strictly for <strong>Kisan Pre-Registration</strong>. Quota verification and approvals are conducted by the Nodal Admin.
-            </p>
-          </div>
-        )}
+        )} 
       </div>
 
       {/* Bottom info & Logout */}
