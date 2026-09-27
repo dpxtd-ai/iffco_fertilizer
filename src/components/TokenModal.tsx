@@ -1,11 +1,11 @@
 import React from 'react';
-import { CheckCircle, Printer, X, ShieldCheck, ArrowRight, QrCode } from 'lucide-react';
+import { CheckCircle, Printer, X, ShieldCheck, PlusCircle } from 'lucide-react';
 import { FarmerRegistration } from '../types';
 
 interface TokenModalProps {
   farmer: FarmerRegistration;
   onClose: () => void;
-  onProceedToIssue: (farmer: FarmerRegistration) => void;
+  onProceedToIssue?: (farmer: FarmerRegistration) => void;
 }
 
 export const TokenModal: React.FC<TokenModalProps> = ({
@@ -149,11 +149,11 @@ export const TokenModal: React.FC<TokenModalProps> = ({
           </button>
 
           <button
-            onClick={() => onProceedToIssue(farmer)}
+            onClick={onClose}
             className="flex items-center gap-1.5 px-4 py-2 bg-[#1b5e20] hover:bg-[#154919] text-white rounded-md text-xs font-bold transition-colors cursor-pointer shadow-xs"
           >
-            <span>Proceed to Issuance Counter</span>
-            <ArrowRight className="w-3.5 h-3.5" />
+            <PlusCircle className="w-3.5 h-3.5" />
+            <span>Next Kisan Registration (नया पंजीकरण)</span>
           </button>
         </div>
       </div>

@@ -2,13 +2,14 @@ import React from 'react';
 import { 
   Users, 
   CheckSquare, 
-  Building2, 
   Package, 
   FileText, 
   Headphones, 
   LogOut,
   UserCheck,
-  ShieldCheck
+  Trash2,
+  Database,
+  ShieldAlert
 } from 'lucide-react';
 import { ActiveTab, UserRole } from '../types';
 
@@ -18,6 +19,7 @@ interface SidebarProps {
   pendingApprovalsCount: number;
   userRole: UserRole;
   onLogout: () => void;
+  onOpenWipeModal?: () => void;
 }
 
 export const Sidebar: React.FC<SidebarProps> = ({
@@ -26,10 +28,11 @@ export const Sidebar: React.FC<SidebarProps> = ({
   pendingApprovalsCount,
   userRole,
   onLogout,
+  onOpenWipeModal,
 }) => {
   // Navigation items partitioned by role
-  // Admin: does approvals only, manages operators + MAC devices, inventory, reports. NO Kisan registration!
-  // Operator: handles Farmer Pre-Registration, Issuance Counter, status view, inventory.
+  // Admin: does approvals, manages operators + MAC devices, inventory, reports.
+  // Operator: can do ONLY Kisan registration as instructed.
   const adminMenuItems: { id: ActiveTab; label: string; labelHindi: string; icon: React.ReactNode; badge?: number; tag?: string }[] = [
     {
       id: 'status-approvals',
@@ -60,32 +63,14 @@ export const Sidebar: React.FC<SidebarProps> = ({
     },
   ];
 
+  // Operator can ONLY do Kisan Registration
   const operatorMenuItems: { id: ActiveTab; label: string; labelHindi: string; icon: React.ReactNode; badge?: number; tag?: string }[] = [
     {
       id: 'farmer-registration',
-      label: 'Farmer Pre-Registration',
+      label: 'Kisan Pre-Registration',
       labelHindi: 'कृषक पूर्व-पंजीकरण',
       icon: <Users className="w-4 h-4 shrink-0" />,
-      tag: 'Entry Desk',
-    },
-    {
-      id: 'issuance-counter',
-      label: 'Issuance Counter',
-      labelHindi: 'उर्वरक वितरण काउंटर',
-      icon: <Building2 className="w-4 h-4 shrink-0" />,
-    },
-    {
-      id: 'status-approvals',
-      label: 'Verification Status',
-      labelHindi: 'पंजीकरण स्थिति',
-      icon: <CheckSquare className="w-4 h-4 shrink-0" />,
-      badge: pendingApprovalsCount,
-    },
-    {
-      id: 'inventory-depot',
-      label: 'Inventory & Depot',
-      labelHindi: 'भंडार एवं डिपो स्टॉक',
-      icon: <Package className="w-4 h-4 shrink-0" />,
+      tag: 'Operator Desk',
     },
   ];
 
@@ -106,7 +91,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
                   : 'bg-emerald-100 text-emerald-900 border border-emerald-300'
               }`}
             >
-              {userRole === 'admin' ? 'Nodal Admin' : 'Kiosk Operator'}
+              {userRole === 'admin' ? 'Nodal Admin' : 'Registration Desk'}
             </span>
           </div>
         </div>
@@ -160,6 +145,39 @@ export const Sidebar: React.FC<SidebarProps> = ({
             );
           })}
         </nav>
+
+        {/* Admin Only: Wipe Cache and System Temp Data Control */}
+        {userRole === 'admin' && onOpenWipeModal && (
+          <div className="mt-5 pt-4 border-t border-stone-200">
+            <div className="bg-red-50/80 border border-red-200/90 rounded-lg p-3 space-y-2">
+              <div className="flex items-center gap-1.5 text-red-950 font-bold text-[11.5px]">
+                <ShieldAlert className="w-4 h-4 text-red-600 shrink-0" />
+                <span>Admin Cache Control</span>
+              </div>
+              <p className="text-[10px] text-stone-600 leading-tight">
+                Purge all temporary caches, form drafts, and session queues.
+              </p>
+              <button
+                type="button"
+                onClick={onOpenWipeModal}
+                className="w-full flex items-center justify-center gap-1.5 py-2 px-2.5 bg-red-600 hover:bg-red-700 text-white rounded-md text-xs font-bold transition-all shadow-xs cursor-pointer"
+              >
+                <Trash2 className="w-3.5 h-3.5" />
+                <span>Wipe Cache Data</span>
+              </button>
+            </div>
+          </div>
+        )}
+
+        {/* Operator Note: Operator Can Do Only Kisan Registration */}
+        {userRole === 'operator' && (
+          <div className="mt-4 p-3 bg-emerald-50/80 border border-emerald-200/80 rounded-lg text-xs space-y-1">
+            <p className="font-bold text-emerald-950 text-[11px]">Operator Desk Policy</p>
+            <p className="text-[10.5px] text-stone-600 leading-snug">
+              This terminal is assigned strictly for <strong>Kisan Pre-Registration</strong>. Quota verification and approvals are conducted by the Nodal Admin.
+            </p>
+          </div>
+        )}
       </div>
 
       {/* Bottom info & Logout */}

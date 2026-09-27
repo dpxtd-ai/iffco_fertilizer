@@ -7,7 +7,6 @@ import {
   AlertCircle, 
   RefreshCw, 
   PhoneCall, 
-  Database,
   UserCheck,
   ShieldAlert
 } from 'lucide-react';
@@ -17,14 +16,12 @@ interface LoginScreenProps {
   onLoginSuccess: (officerName: string, role: UserRole) => void;
   currentMac: string;
   operators: OperatorAccount[];
-  onClearCache: () => void;
 }
 
 export const LoginScreen: React.FC<LoginScreenProps> = ({ 
   onLoginSuccess,
   currentMac,
   operators,
-  onClearCache,
 }) => {
   const [activeRole, setActiveRole] = useState<UserRole>('admin');
   const [userId, setUserId] = useState('');
@@ -34,7 +31,6 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({
   const [errorMessage, setErrorMessage] = useState('');
   const [macMismatchError, setMacMismatchError] = useState<{ detected: string; registered: string } | null>(null);
   const [isLoading, setIsLoading] = useState(false);
-  const [cacheClearedMsg, setCacheClearedMsg] = useState(false);
 
   const refreshCaptcha = () => {
     const chars = '23456789ABCDEFGHJKLMNPQRSTUVWXYZ';
@@ -119,17 +115,6 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({
         onLoginSuccess(foundOperator.name, 'operator');
       }
     }, 400);
-  };
-
-  const handleClearAppCache = () => {
-    onClearCache();
-    setUserId('');
-    setPassword('');
-    setCaptchaInput('');
-    setErrorMessage('');
-    setMacMismatchError(null);
-    setCacheClearedMsg(true);
-    setTimeout(() => setCacheClearedMsg(false), 2500);
   };
 
   return (
@@ -335,22 +320,12 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({
             </form>
           </div>
 
-          {/* System Hardware MAC Info & Clear Cache */}
-          <div className="flex items-center justify-between text-[11px] text-stone-500 pt-1">
-            <span className="flex items-center gap-1 font-mono">
+          {/* System Hardware MAC Info */}
+          <div className="flex items-center justify-center text-[11px] text-stone-500 pt-1">
+            <span className="flex items-center gap-1.5 font-mono">
               <Cpu className="w-3.5 h-3.5 text-stone-400" />
-              Detected MAC: <strong className="text-stone-700">{currentMac}</strong>
+              Station Hardware MAC: <strong className="text-stone-700">{currentMac}</strong>
             </span>
-
-            <button
-              type="button"
-              onClick={handleClearAppCache}
-              className="text-stone-500 hover:text-red-700 font-bold underline cursor-pointer flex items-center gap-1"
-              title="Flush session storage and temporary cache"
-            >
-              <Database className="w-3 h-3" />
-              <span>{cacheClearedMsg ? 'Cache Cleared!' : 'Wipe Temp Cache'}</span>
-            </button>
           </div>
         </div>
       </div>

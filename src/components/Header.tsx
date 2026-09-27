@@ -1,5 +1,5 @@
 import React from 'react';
-import { ShieldCheck, PhoneCall, Radio, CheckCircle2 } from 'lucide-react';
+import { ShieldCheck, PhoneCall, Radio, CheckCircle2, Trash2 } from 'lucide-react';
 import { KendraKPIs } from '../types';
 
 interface HeaderProps {
@@ -9,6 +9,7 @@ interface HeaderProps {
   onLogout: () => void;
   officerName?: string;
   userRole?: 'admin' | 'operator';
+  onOpenWipeModal?: () => void;
 }
 
 export const Header: React.FC<HeaderProps> = ({
@@ -18,6 +19,7 @@ export const Header: React.FC<HeaderProps> = ({
   onLogout,
   officerName = 'Dr. Rajesh Sharma',
   userRole = 'admin',
+  onOpenWipeModal,
 }) => {
   return (
     <header className="w-full bg-white border-b border-stone-200 sticky top-0 z-30 select-none shadow-xs">
@@ -107,10 +109,21 @@ export const Header: React.FC<HeaderProps> = ({
             </div>
           </div>
 
+          {userRole === 'admin' && onOpenWipeModal && (
+            <button
+              onClick={onOpenWipeModal}
+              title="Admin Exclusive: Purge temporary session and app cache"
+              className="hidden sm:inline-flex items-center gap-1.5 text-[11px] font-bold text-red-700 hover:text-red-800 bg-red-50 hover:bg-red-100 border border-red-200 hover:border-red-300 px-2.5 py-1.5 rounded-md transition-colors cursor-pointer"
+            >
+              <Trash2 className="w-3.5 h-3.5 text-red-600" />
+              <span>Wipe Cache</span>
+            </button>
+          )}
+
           <button
             onClick={onLogout}
             title="Log out of session"
-            className="hidden sm:inline-flex text-[11px] font-semibold text-stone-600 hover:text-red-700 bg-white hover:bg-red-50 border border-stone-300 hover:border-red-300 px-2.5 py-1.5 rounded-md transition-colors"
+            className="hidden sm:inline-flex text-[11px] font-semibold text-stone-600 hover:text-red-700 bg-white hover:bg-red-50 border border-stone-300 hover:border-red-300 px-2.5 py-1.5 rounded-md transition-colors cursor-pointer"
           >
             Sign Out
           </button>

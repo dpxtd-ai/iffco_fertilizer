@@ -14,6 +14,7 @@ import { InventoryDepotView } from './components/InventoryDepotView';
 import { ReportsLogsView } from './components/ReportsLogsView';
 import { OperatorManagementView } from './components/OperatorManagementView';
 import { TokenModal } from './components/TokenModal';
+import { WipeCacheModal } from './components/WipeCacheModal';
 import { LoginScreen } from './components/LoginScreen';
 import { Footer } from './components/Footer';
 
@@ -60,8 +61,7 @@ export default function App() {
   });
 
   // Active navigation tab
-  // Admin only does approval, so default for admin is 'status-approvals'
-  // Operator does Kisan registration, so default for operator is 'farmer-registration'
+  // Admin only does approval, operator only does farmer registration
   const [activeTab, setActiveTab] = useState<ActiveTab>(() => {
     const savedRole = localStorage.getItem('kendra_role');
     return savedRole === 'operator' ? 'farmer-registration' : 'status-approvals';
@@ -69,7 +69,7 @@ export default function App() {
 
   const [language, setLanguage] = useState<'en' | 'hi'>('en');
 
-  // Clean application state (no dummy records)
+  // Application state (clean records)
   const [kpis, setKpis] = useState<KendraKPIs>(INITIAL_KPIS);
   const [registrations, setRegistrations] = useState<FarmerRegistration[]>(INITIAL_REGISTRATIONS);
   const [inventory, setInventory] = useState<InventoryItem[]>(INITIAL_INVENTORY);
@@ -78,8 +78,11 @@ export default function App() {
   // Active modal for newly generated token slip
   const [newlyRegisteredFarmer, setNewlyRegisteredFarmer] = useState<FarmerRegistration | null>(null);
 
-  // Direct hand-off from Registration or Status view to Issuance Counter
+  // Direct hand-off from Status view to Issuance Counter
   const [farmerForIssuance, setFarmerForIssuance] = useState<FarmerRegistration | null>(null);
+
+  // Admin Wipe Cache Modal state - visible ONLY after Admin login
+  const [isWipeModalOpen, setIsWipeModalOpen] = useState(false);
 
   // Operator Management Handlers (Admin action to add operator with MAC and details)
   const handleAddOperator = (operatorData: Omit<OperatorAccount, 'id' | 'createdAt'>) => {
@@ -117,11 +120,20 @@ export default function App() {
     saveOperators(updated);
   };
 
-  // Clear all application cache & reset state
-  const handleClearAllCache = () => {
-    clearAllApplicationCache();
-    setIsAuthenticated(false);
-    setUserRole('admin');
+  // Perform Wipe Cache - Admin Login Only
+  const handleAdminConfirmWipe = (resetOperators: boolean) => {
+    // Purge temporary browser session caches
+    sessionStorage.clear();
+    localStorage.removeItem('pm_kendra_registrations');
+    localStorage.removeItem('pm_kendra_transactions');
+    localStorage.removeItem('pm_kendra_form_draft');
+
+    if (resetOperators) {
+      localStorage.removeItem('pm_kendra_operators_list');
+      setOperators(getInitialOperators());
+    }
+
+    // Reset runtime application cache & queues
     setRegistrations([]);
     setTransactions([]);
     setKpis({
@@ -167,13 +179,6 @@ export default function App() {
       ...prev,
       pendingApprovals: Math.max(0, prev.pendingApprovals - 1),
     }));
-  };
-
-  // Transition from token slip modal to issuance counter
-  const handleProceedToIssue = (farmer: FarmerRegistration) => {
-    setNewlyRegisteredFarmer(null);
-    setFarmerForIssuance(farmer);
-    setActiveTab('issuance-counter');
   };
 
   // Select farmer from Status table to dispense bags
@@ -226,12 +231,12 @@ export default function App() {
     localStorage.setItem('kendra_role', role);
     localStorage.setItem('kendra_officer', name);
 
-    // If Admin: only does approvals, cannot do Kisan registration! Default to 'status-approvals'
-    // If Operator: does Kisan registration, default to 'farmer-registration'
-    if (role === 'admin') {
-      setActiveTab('status-approvals');
-    } else {
+    // Operator can ONLY do Kisan registration
+    // Admin does approval / management
+    if (role === 'operator') {
       setActiveTab('farmer-registration');
+    } else {
+      setActiveTab('status-approvals');
     }
   };
 
@@ -248,24 +253,25 @@ export default function App() {
     setLanguage((prev) => (prev === 'en' ? 'hi' : 'en'));
   };
 
-  // 1. Direct Login Page: Always accessible. Admin can log in from any system without MAC check.
-  // Operator validates MAC address along with credentials on login.
+  // 1. Login Page: Admin and Operator login without any wipe cache button
   if (!isAuthenticated) {
     return (
       <LoginScreen
         onLoginSuccess={handleLoginSuccess}
         currentMac={currentMac}
         operators={operators}
-        onClearCache={handleClearAllCache}
       />
     );
   }
 
-  // Ensure Admin cannot access Kisan registration tab
+  // Operator is strictly locked to Kisan Registration only
+  // Admin cannot do Kisan Registration
   const effectiveTab: ActiveTab =
-    userRole === 'admin' && activeTab === 'farmer-registration'
-      ? 'status-approvals'
-      : activeTab;
+    userRole === 'operator'
+      ? 'farmer-registration'
+      : activeTab === 'farmer-registration'
+        ? 'status-approvals'
+        : activeTab;
 
   const featuredFarmer = registrations[0] || null;
 
@@ -279,6 +285,7 @@ export default function App() {
         onLogout={handleLogout}
         officerName={officerName}
         userRole={userRole}
+        onOpenWipeModal={userRole === 'admin' ? () => setIsWipeModalOpen(true) : undefined}
       />
 
       {/* Main Container Layout */}
@@ -290,20 +297,21 @@ export default function App() {
           pendingApprovalsCount={kpis.pendingApprovals}
           userRole={userRole}
           onLogout={handleLogout}
+          onOpenWipeModal={userRole === 'admin' ? () => setIsWipeModalOpen(true) : undefined}
         />
 
         {/* Center Main Stage Content */}
         <main className="flex-1 p-4 sm:p-5 overflow-x-hidden min-w-0">
           {/* Operator Only: Kisan Pre-Registration */}
-          {userRole === 'operator' && effectiveTab === 'farmer-registration' && (
+          {userRole === 'operator' && (
             <FarmerRegistrationView
               onRegisterSuccess={handleRegisterSuccess}
               language={language}
             />
           )}
 
-          {/* Status & Approvals: Admin does approvals only, Operator can view status */}
-          {effectiveTab === 'status-approvals' && (
+          {/* Admin Only: Status & Approvals */}
+          {userRole === 'admin' && effectiveTab === 'status-approvals' && (
             <StatusApprovalsView
               registrations={registrations}
               onApprove={handleApprove}
@@ -312,8 +320,8 @@ export default function App() {
             />
           )}
 
-          {/* Issuance Counter */}
-          {effectiveTab === 'issuance-counter' && (
+          {/* Admin Only: Issuance Counter */}
+          {userRole === 'admin' && effectiveTab === 'issuance-counter' && (
             <IssuanceCounterView
               initialFarmer={farmerForIssuance}
               onCompleteIssuance={handleCompleteIssuance}
@@ -321,13 +329,13 @@ export default function App() {
             />
           )}
 
-          {/* Inventory & Depot */}
-          {effectiveTab === 'inventory-depot' && (
+          {/* Admin Only: Inventory & Depot */}
+          {userRole === 'admin' && effectiveTab === 'inventory-depot' && (
             <InventoryDepotView inventory={inventory} />
           )}
 
-          {/* Reports & DBT Logs */}
-          {effectiveTab === 'reports-logs' && (
+          {/* Admin Only: Reports & DBT Logs */}
+          {userRole === 'admin' && effectiveTab === 'reports-logs' && (
             <ReportsLogsView transactions={transactions} />
           )}
 
@@ -358,7 +366,16 @@ export default function App() {
         <TokenModal
           farmer={newlyRegisteredFarmer}
           onClose={() => setNewlyRegisteredFarmer(null)}
-          onProceedToIssue={handleProceedToIssue}
+        />
+      )}
+
+      {/* Admin Exclusive: Wipe Cache Modal */}
+      {userRole === 'admin' && (
+        <WipeCacheModal
+          isOpen={isWipeModalOpen}
+          onClose={() => setIsWipeModalOpen(false)}
+          onConfirmWipe={handleAdminConfirmWipe}
+          officerName={officerName}
         />
       )}
 
