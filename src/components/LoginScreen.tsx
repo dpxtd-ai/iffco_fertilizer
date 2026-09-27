@@ -190,40 +190,12 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({
               <UserCheck className="w-4 h-4" />
               <span>Operator Login (ऑपरेटर)</span>
             </button>
-          </div>
-
-          {/* Policy Banner Info */}
-          <div className="bg-stone-50 border border-stone-200 rounded-lg p-2.5 text-xs">
-            {activeRole === 'admin' ? (
-              <div className="flex items-center justify-between text-stone-700 font-medium">
-                <span className="flex items-center gap-1.5 font-bold text-stone-900">
-                  <ShieldCheck className="w-4 h-4 text-emerald-700" />
-                  Admin Direct Authentication
-                </span>
-                <span className="text-[10px] text-stone-500 bg-stone-200/80 px-2 py-0.5 rounded font-mono">
-                  MAC Check: Bypassed for Admin
-                </span>
-              </div>
-            ) : (
-              <div className="flex items-center justify-between text-stone-700 font-medium">
-                <span className="flex items-center gap-1.5 font-bold text-amber-900">
-                  <Cpu className="w-4 h-4 text-amber-700" />
-                  Operator Hardware Bound
-                </span>
-                <span className="text-[10px] text-amber-900 bg-amber-100 border border-amber-300 px-2 py-0.5 rounded font-mono font-bold">
-                  MAC Validation Required
-                </span>
-              </div>
-            )}
-          </div>
+          </div> 
 
           {/* Form */}
           <div className="bg-white rounded-xl border border-stone-200 p-6 shadow-sm space-y-4">
             <h2 className="text-sm font-extrabold text-stone-900 border-b border-stone-100 pb-2 flex items-center justify-between">
-              <span>{activeRole === 'admin' ? 'Admin Portal Sign In' : 'Counter Operator Sign In'}</span>
-              <span className="text-[10px] text-stone-400 font-mono font-normal">
-                NIC Terminal #{currentMac.slice(-5)}
-              </span>
+              <span>{activeRole === 'admin' ? 'Admin Portal Sign In' : 'Counter Operator Sign In'}</span> 
             </h2>
 
             {errorMessage && (
