@@ -81,16 +81,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
           <div className="flex items-center justify-between">
             <p className="text-[10px] font-bold text-stone-500 uppercase tracking-wider">
               {userRole === 'admin' ? 'ADMIN CONSOLE' : 'OPERATOR STATION'}
-            </p>
-            <span
-              className={`text-[9px] font-black uppercase px-2 py-0.5 rounded-full ${
-                userRole === 'admin'
-                  ? 'bg-amber-100 text-amber-900 border border-amber-300'
-                  : 'bg-emerald-100 text-emerald-900 border border-emerald-300'
-              }`}
-            >
-              {userRole === 'admin' ? 'Nodal Admin' : 'Registration Desk'}
-            </span>
+            </p> 
           </div>
         </div>
 
