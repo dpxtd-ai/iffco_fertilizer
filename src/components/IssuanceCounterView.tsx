@@ -279,11 +279,7 @@ export const IssuanceCounterView: React.FC<IssuanceCounterViewProps> = ({
                 <div className="flex justify-between text-emerald-700 font-bold">
                   <span>Central Govt Direct Subsidy:</span>
                   <span className="font-mono">- ₹{govtSubsidy.toLocaleString()}</span>
-                </div>
-                <div className="border-t border-stone-200 pt-2 flex justify-between items-baseline font-black">
-                  <span className="text-stone-900 text-sm">Farmer Payable Amount:</span>
-                  <span className="text-xl text-[#1b5e20] font-mono">₹{farmerPayable.toFixed(2)}</span>
-                </div>
+                </div> 
               </div>
 
               {/* Payment Method Selector */}

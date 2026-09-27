@@ -165,10 +165,7 @@ export const StatusApprovalsView: React.FC<StatusApprovalsViewProps> = ({
                       <span className="font-extrabold text-[#1b5e20] text-sm">{item.quantityBags} Bags</span>
                       <span className="text-[10.5px] text-stone-400">•</span>
                       <span className="text-emerald-700 font-bold text-[11px]">{item.nanoUreaBottles} Nano</span>
-                    </div>
-                    <p className="text-[10.5px] text-stone-500">
-                      Farmer Pay: <strong>₹{item.farmerPayable.toFixed(2)}</strong>
-                    </p>
+                    </div> 
                   </td>
 
                   {/* Address */}
@@ -291,25 +288,8 @@ export const StatusApprovalsView: React.FC<StatusApprovalsViewProps> = ({
                 <p><strong>Address:</strong> {selectedFarmer.village}, Tehsil {selectedFarmer.tehsil}, {selectedFarmer.district}, {selectedFarmer.pinCode}</p>
                 <p><strong>Land Acreage:</strong> {selectedFarmer.landAcres} Acres ({selectedFarmer.cropType})</p>
                 <p><strong>Khasra No:</strong> {selectedFarmer.khasraNumber || 'N/A'}</p>
-              </div>
-
-              <div className="border-t border-stone-200 pt-2 flex justify-between font-bold">
-                <span>Subsidized Urea Quota:</span>
-                <span className="text-[#1b5e20]">{selectedFarmer.quantityBags} Bags (Neem Coated) + {selectedFarmer.nanoUreaBottles} Nano Urea</span>
-              </div>
-              <div className="flex justify-between text-stone-600">
-                <span>Govt Subsidy: ₹{selectedFarmer.subsidyGovtShare.toLocaleString()}</span>
-                <span className="font-bold text-stone-900">Farmer Payable: ₹{selectedFarmer.farmerPayable.toFixed(2)}</span>
-              </div>
-            </div>
-            <div className="bg-stone-50 px-4 py-2.5 border-t border-stone-200 text-right">
-              <button
-                onClick={() => setSelectedFarmer(null)}
-                className="bg-stone-200 hover:bg-stone-300 text-stone-800 text-xs font-bold px-3 py-1.5 rounded cursor-pointer"
-              >
-                Close
-              </button>
-            </div>
+              </div> 
+            </div> 
           </div>
         </div>
       )}
