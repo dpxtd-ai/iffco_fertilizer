@@ -1,6 +1,6 @@
 {
-  "name": "",
-  "description": "",
+  "name": "PM Kisan Urvarak Seva Portal",
+  "description": "IFFCO Central Fertilizer Distribution System - Farmer Urea Pre-Registration, DBT Quota Verification, and Issuance Portal",
   "requestFramePermissions": [],
   "majorCapabilities": [
     "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
