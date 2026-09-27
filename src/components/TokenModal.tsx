@@ -89,10 +89,7 @@ export const TokenModal: React.FC<TokenModalProps> = ({
             </div>
             <div>
               <p className="text-[10.5px] text-stone-500 font-medium">Aadhaar (UIDAI):</p>
-              <p className="font-mono font-bold text-stone-900">{farmer.aadhaarMasked}</p>
-              <span className="text-[10px] text-emerald-700 font-bold bg-emerald-50 px-1 rounded">
-                Biometric Verified
-              </span>
+              <p className="font-mono font-bold text-stone-900">{farmer.aadhaarMasked}</p> 
             </div>
 
             <div>
@@ -112,31 +109,11 @@ export const TokenModal: React.FC<TokenModalProps> = ({
             <div className="flex justify-between items-center font-bold">
               <span className="text-stone-800">Neem Coated Urea (45 Kg Bags):</span>
               <span className="text-sm font-extrabold text-[#1b5e20]">{farmer.quantityBags} Bags</span>
-            </div>
-            <div className="flex justify-between items-center font-bold">
-              <span className="text-stone-800">Nano Urea Liquid Spray (500 mL):</span>
-              <span className="text-sm font-extrabold text-emerald-800">{farmer.nanoUreaBottles} Bottles</span>
-            </div>
-
-            <div className="border-t border-emerald-200 pt-2 flex justify-between text-xs font-semibold">
-              <span className="text-stone-600">Central Govt DBT Subsidy:</span>
-              <span className="text-emerald-800 font-bold">₹{farmer.subsidyGovtShare.toLocaleString()}</span>
-            </div>
-
-            <div className="flex justify-between text-sm font-extrabold text-stone-900 border-t border-emerald-200/80 pt-1">
-              <span>Total Subsidized Payable at POS:</span>
-              <span className="text-base text-stone-950">₹{farmer.farmerPayable.toFixed(2)}</span>
-            </div>
-          </div>
-
-          <div className="flex items-center justify-between text-[11px] text-stone-500">
-            <span className="flex items-center gap-1 font-medium">
-              <ShieldCheck className="w-3.5 h-3.5 text-emerald-600" />
-              Authenticated via UIDAI Aadhaar Vault
-            </span>
-            <span className="font-mono text-[10px]">Pos Ref: MRT-POS-0419</span>
-          </div>
+            </div>  
+          </div> 
         </div>
+
+        {/* Add block where shows the barcode for payment and that image read from repo location */}
 
         {/* Modal Footer Actions */}
         <div className="bg-stone-50 px-5 py-3 border-t border-stone-200 flex items-center justify-between gap-3">

@@ -269,33 +269,7 @@ export const FarmerRegistrationView: React.FC<FarmerRegistrationViewProps> = ({
               </div>
             </div>
           </div>
-        </div>
-
-        {/* Demo Fast Fill Pill */}
-        <div className="mt-3 pt-3 border-t border-stone-100 flex items-center justify-between">
-          <span className="text-[11px] text-stone-500 flex items-center gap-1">
-            <Info className="w-3.5 h-3.5 text-stone-400" />
-            Direct Verification: Mobile & Aadhaar Number Linked (No OTP / Biometric Required)
-          </span>
-          <div className="flex items-center gap-2">
-            <button
-              type="button"
-              onClick={handleLoadSample}
-              className="text-[11px] text-emerald-800 hover:text-emerald-950 font-bold bg-emerald-50 hover:bg-emerald-100 border border-emerald-200 px-2.5 py-1 rounded transition-colors flex items-center gap-1 cursor-pointer"
-            >
-              <Sparkles className="w-3 h-3 text-emerald-600" />
-              Pre-Fill Sample (Rameshwar Yadav)
-            </button>
-            <button
-              type="button"
-              onClick={handleResetForm}
-              className="text-[11px] text-stone-600 hover:text-stone-900 font-semibold hover:bg-stone-100 border border-stone-200 px-2 py-1 rounded transition-colors flex items-center gap-1 cursor-pointer"
-            >
-              <RefreshCw className="w-3 h-3 text-stone-400" />
-              Clear
-            </button>
-          </div>
-        </div>
+        </div> 
       </div>
 
       {errorMessage && (
@@ -323,11 +297,7 @@ export const FarmerRegistrationView: React.FC<FarmerRegistrationViewProps> = ({
                   Validated through UIDAI Aadhaar Vault & PM-Kisan Database
                 </p>
               </div>
-            </div>
-
-            <div className="bg-emerald-50 border border-emerald-200 text-emerald-800 text-[11.5px] font-bold px-2.5 py-1 rounded-md flex items-center gap-1.5">
-              <span>Operator Desk Entry</span>
-            </div>
+            </div> 
           </div>
 
           {/* Identity Fields Grid */}
@@ -443,10 +413,7 @@ export const FarmerRegistrationView: React.FC<FarmerRegistrationViewProps> = ({
                 placeholder="Enter 10-digit mobile number (e.g. 9837245812)"
                 required
                 className="w-full bg-stone-50/70 border border-stone-300 rounded px-3 py-2 text-xs font-semibold text-stone-900 focus:outline-none focus:ring-1 focus:ring-emerald-600 focus:bg-white font-mono"
-              />
-              <p className="text-[10.5px] text-stone-500 mt-1">
-                SMS dispatch & token updates sent to this number
-              </p>
+              /> 
             </div>
 
             {/* Field 6: PM-Kisan ID */}
@@ -461,10 +428,7 @@ export const FarmerRegistrationView: React.FC<FarmerRegistrationViewProps> = ({
                   onChange={(e) => setFormData({ ...formData, pmKisanId: e.target.value })}
                   placeholder="UP / 2024 / 984321"
                   className="flex-1 bg-stone-50/70 border border-stone-300 rounded px-3 py-2 text-xs font-mono font-bold text-blue-900 focus:outline-none focus:ring-1 focus:ring-emerald-600 focus:bg-white"
-                />
-                <span className="text-[11px] font-bold text-emerald-800 bg-emerald-50 border border-emerald-200/70 px-2 py-2 rounded whitespace-nowrap">
-                  Linked DBT Active 16th Tranche
-                </span>
+                /> 
               </div>
             </div>
           </div>
@@ -486,11 +450,7 @@ export const FarmerRegistrationView: React.FC<FarmerRegistrationViewProps> = ({
                   Calculated based on crop acreage & PM-PRANAM balanced fertilization policy
                 </p>
               </div>
-            </div>
-
-            <span className="text-xs font-bold text-stone-600 bg-stone-100 px-2.5 py-1 rounded">
-              Subsidized Cap: 20 Bags / Season
-            </span>
+            </div> 
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -577,35 +537,7 @@ export const FarmerRegistrationView: React.FC<FarmerRegistrationViewProps> = ({
                 </button>
                 <span className="text-xs font-bold text-stone-600">Bags ({ureaBags * 45} Kg)</span>
               </div>
-            </div>
-
-            {/* Mandatory Nano Urea Ratio */}
-            <div className="border-l border-emerald-200/80 pl-3">
-              <p className="text-[11px] font-bold text-emerald-950 uppercase tracking-wide">
-                Nano Urea Spray (1:4 PM-PRANAM Ratio)
-              </p>
-              <p className="text-base font-extrabold text-emerald-900 mt-0.5">
-                {formData.nanoUreaBottles || 2} Bottles <span className="text-xs font-normal text-stone-500">(500 ml each)</span>
-              </p>
-              <p className="text-[10.5px] text-emerald-800 font-medium">
-                Saves soil health & boosts yield
-              </p>
-            </div>
-
-            {/* Subsidized Price Summary */}
-            <div className="border-l border-emerald-200/80 pl-3 bg-white p-2.5 rounded border border-emerald-100">
-              <div className="flex justify-between text-xs">
-                <span className="text-stone-500">Govt DBT Subsidy:</span>
-                <span className="font-extrabold text-emerald-700">₹{govtSubsidyTotal}</span>
-              </div>
-              <div className="flex justify-between text-xs mt-1 border-t border-stone-100 pt-1">
-                <span className="font-bold text-stone-800">Farmer Payable:</span>
-                <span className="font-extrabold text-stone-900 text-sm">₹{farmerPayableTotal}</span>
-              </div>
-              <p className="text-[10px] text-stone-400 mt-0.5 text-right font-medium">
-                @ ₹266.50 per 45kg bag
-              </p>
-            </div>
+            </div>  
           </div>
 
           {/* Address Fields */}
