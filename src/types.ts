@@ -85,10 +85,25 @@ export interface WhitelistedDevice {
   notes?: string;
 }
 
+export type UserRole = 'admin' | 'operator';
+
+export interface OperatorAccount {
+  id: string;
+  name: string;
+  userId: string;
+  password?: string;
+  contactNumber: string;
+  macAddress: string;
+  counterId: string;
+  status: 'Active' | 'Suspended';
+  createdAt: string;
+  lastLogin?: string;
+}
+
 export type ActiveTab = 
   | 'farmer-registration' 
   | 'status-approvals' 
   | 'issuance-counter' 
   | 'inventory-depot' 
   | 'reports-logs'
-  | 'device-whitelist';
+  | 'operator-management';

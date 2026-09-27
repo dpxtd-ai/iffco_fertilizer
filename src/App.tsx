@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Header } from './components/Header';
 import { Sidebar } from './components/Sidebar';
 import { RightSidebar } from './components/RightSidebar';
@@ -12,8 +12,7 @@ import { StatusApprovalsView } from './components/StatusApprovalsView';
 import { IssuanceCounterView } from './components/IssuanceCounterView';
 import { InventoryDepotView } from './components/InventoryDepotView';
 import { ReportsLogsView } from './components/ReportsLogsView';
-import { DeviceWhitelistView } from './components/DeviceWhitelistView';
-import { DeviceBlockedScreen } from './components/DeviceBlockedScreen';
+import { OperatorManagementView } from './components/OperatorManagementView';
 import { TokenModal } from './components/TokenModal';
 import { LoginScreen } from './components/LoginScreen';
 import { Footer } from './components/Footer';
@@ -30,30 +29,44 @@ import {
   KendraKPIs,
   InventoryItem,
   DBTTransaction,
-  WhitelistedDevice,
+  OperatorAccount,
+  UserRole,
 } from './types';
 import {
   getOrCreateSystemMacAddress,
-  getInitialWhitelistedDevices,
-  saveWhitelistedDevices,
-  isMacAddressWhitelisted,
+  getInitialOperators,
+  saveOperators,
   clearAllApplicationCache,
 } from './utils/deviceSecurity';
 
 export default function App() {
-  // Device Hardware Security: System MAC Address
-  const [currentMac, setCurrentMac] = useState<string>(() => getOrCreateSystemMacAddress());
-  const [whitelistedDevices, setWhitelistedDevices] = useState<WhitelistedDevice[]>(() =>
-    getInitialWhitelistedDevices()
-  );
-  const [isSimulatingUnauthorized, setIsSimulatingUnauthorized] = useState(false);
+  // System NIC Hardware Identifier (MAC Address)
+  const [currentMac] = useState<string>(() => getOrCreateSystemMacAddress());
 
-  // Authentication State
+  // Operators List (managed by Admin)
+  const [operators, setOperators] = useState<OperatorAccount[]>(() => getInitialOperators());
+
+  // Authentication & Role State
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(() => {
     return localStorage.getItem('kendra_auth') === 'true';
   });
 
-  const [activeTab, setActiveTab] = useState<ActiveTab>('farmer-registration');
+  const [userRole, setUserRole] = useState<UserRole>(() => {
+    return (localStorage.getItem('kendra_role') as UserRole) || 'admin';
+  });
+
+  const [officerName, setOfficerName] = useState<string>(() => {
+    return localStorage.getItem('kendra_officer') || 'Dr. Rajesh Sharma (Nodal Admin)';
+  });
+
+  // Active navigation tab
+  // Admin only does approval, so default for admin is 'status-approvals'
+  // Operator does Kisan registration, so default for operator is 'farmer-registration'
+  const [activeTab, setActiveTab] = useState<ActiveTab>(() => {
+    const savedRole = localStorage.getItem('kendra_role');
+    return savedRole === 'operator' ? 'farmer-registration' : 'status-approvals';
+  });
+
   const [language, setLanguage] = useState<'en' | 'hi'>('en');
 
   // Clean application state (no dummy records)
@@ -68,76 +81,47 @@ export default function App() {
   // Direct hand-off from Registration or Status view to Issuance Counter
   const [farmerForIssuance, setFarmerForIssuance] = useState<FarmerRegistration | null>(null);
 
-  // Check if current system MAC address is whitelisted by Admin
-  const isDeviceAuthorized =
-    !isSimulatingUnauthorized && isMacAddressWhitelisted(currentMac, whitelistedDevices);
-
-  // Authorize / Whitelist device from blocked screen
-  const handleAuthorizeFromBlockedScreen = (deviceName: string) => {
-    const newDevice: WhitelistedDevice = {
-      id: `DEV-${Date.now().toString().slice(-4)}`,
-      deviceName: deviceName || 'Authorized Admin Terminal',
-      macAddress: currentMac,
-      ipAddress: '10.24.112.45',
-      authorizedBy: 'Master Administrator Override',
-      addedAt: new Date().toISOString().split('T')[0],
-      status: 'Active',
-      lastSeen: 'Just now',
-      deviceType: 'Admin Terminal',
-      notes: 'Whitelisted via Administrator Master Override',
+  // Operator Management Handlers (Admin action to add operator with MAC and details)
+  const handleAddOperator = (operatorData: Omit<OperatorAccount, 'id' | 'createdAt'>) => {
+    const newOp: OperatorAccount = {
+      ...operatorData,
+      id: `OP-${Date.now().toString().slice(-4)}`,
+      createdAt: new Date().toISOString().split('T')[0],
     };
-
-    const updated = [newDevice, ...whitelistedDevices];
-    setWhitelistedDevices(updated);
-    saveWhitelistedDevices(updated);
-    setIsSimulatingUnauthorized(false);
+    const updated = [newOp, ...operators];
+    setOperators(updated);
+    saveOperators(updated);
   };
 
-  // Reset MAC address to original primary
-  const handleResetToDefaultMac = () => {
-    setIsSimulatingUnauthorized(false);
-    const primary = whitelistedDevices.find((d) => d.status === 'Active');
-    if (primary) {
-      setCurrentMac(primary.macAddress);
-    }
-  };
-
-  // Add a new device to whitelist (Admin action)
-  const handleAddDevice = (deviceData: Omit<WhitelistedDevice, 'id' | 'addedAt'>) => {
-    const newDevice: WhitelistedDevice = {
-      ...deviceData,
-      id: `DEV-${Date.now().toString().slice(-4)}`,
-      addedAt: new Date().toISOString().split('T')[0],
-    };
-    const updated = [newDevice, ...whitelistedDevices];
-    setWhitelistedDevices(updated);
-    saveWhitelistedDevices(updated);
-  };
-
-  // Toggle device active/blocked status
-  const handleToggleDeviceStatus = (id: string) => {
-    const updated = whitelistedDevices.map((d) =>
-      d.id === id ? { ...d, status: (d.status === 'Active' ? 'Blocked' : 'Active') as 'Active' | 'Blocked' } : d
+  const handleToggleOperatorStatus = (id: string) => {
+    const updated = operators.map((op) =>
+      op.id === id
+        ? { ...op, status: (op.status === 'Active' ? 'Suspended' : 'Active') as 'Active' | 'Suspended' }
+        : op
     );
-    setWhitelistedDevices(updated);
-    saveWhitelistedDevices(updated);
+    setOperators(updated);
+    saveOperators(updated);
   };
 
-  // Remove device from whitelist
-  const handleRemoveDevice = (id: string) => {
-    const updated = whitelistedDevices.filter((d) => d.id !== id);
-    setWhitelistedDevices(updated);
-    saveWhitelistedDevices(updated);
+  const handleDeleteOperator = (id: string) => {
+    const updated = operators.filter((op) => op.id !== id);
+    setOperators(updated);
+    saveOperators(updated);
   };
 
-  // Toggle simulate unauthorized MAC
-  const handleToggleSimulateUnauthorized = () => {
-    setIsSimulatingUnauthorized((prev) => !prev);
+  const handleUpdateOperatorMac = (id: string, newMac: string) => {
+    const updated = operators.map((op) =>
+      op.id === id ? { ...op, macAddress: newMac } : op
+    );
+    setOperators(updated);
+    saveOperators(updated);
   };
 
   // Clear all application cache & reset state
   const handleClearAllCache = () => {
     clearAllApplicationCache();
+    setIsAuthenticated(false);
+    setUserRole('admin');
     setRegistrations([]);
     setTransactions([]);
     setKpis({
@@ -152,20 +136,21 @@ export default function App() {
     setFarmerForIssuance(null);
   };
 
-  // Handle successful registration
+  // Handle successful Kisan registration by Operator
   const handleRegisterSuccess = (farmer: FarmerRegistration) => {
     setRegistrations((prev) => [farmer, ...prev]);
     setKpis((prev) => ({
       ...prev,
       preRegistrationsToday: prev.preRegistrationsToday + 1,
+      pendingApprovals: prev.pendingApprovals + 1,
     }));
     setNewlyRegisteredFarmer(farmer);
   };
 
-  // Handle approving a registration
+  // Handle Admin approving a registration
   const handleApprove = (id: string) => {
     setRegistrations((prev) =>
-      prev.map((r) => (r.id === id ? { ...r, status: 'Approved', biometricVerified: true } : r))
+      prev.map((r) => (r.id === id ? { ...r, status: 'Approved' } : r))
     );
     setKpis((prev) => ({
       ...prev,
@@ -173,11 +158,15 @@ export default function App() {
     }));
   };
 
-  // Handle flagging/rejecting a registration
+  // Handle Admin flagging/rejecting a registration
   const handleReject = (id: string) => {
     setRegistrations((prev) =>
       prev.map((r) => (r.id === id ? { ...r, status: 'Flagged' } : r))
     );
+    setKpis((prev) => ({
+      ...prev,
+      pendingApprovals: Math.max(0, prev.pendingApprovals - 1),
+    }));
   };
 
   // Transition from token slip modal to issuance counter
@@ -229,15 +218,29 @@ export default function App() {
   };
 
   // Login handler
-  const handleLoginSuccess = (_officerName: string) => {
+  const handleLoginSuccess = (name: string, role: UserRole) => {
     setIsAuthenticated(true);
+    setUserRole(role);
+    setOfficerName(name);
     localStorage.setItem('kendra_auth', 'true');
+    localStorage.setItem('kendra_role', role);
+    localStorage.setItem('kendra_officer', name);
+
+    // If Admin: only does approvals, cannot do Kisan registration! Default to 'status-approvals'
+    // If Operator: does Kisan registration, default to 'farmer-registration'
+    if (role === 'admin') {
+      setActiveTab('status-approvals');
+    } else {
+      setActiveTab('farmer-registration');
+    }
   };
 
   // Logout handler
   const handleLogout = () => {
     setIsAuthenticated(false);
     localStorage.removeItem('kendra_auth');
+    localStorage.removeItem('kendra_role');
+    localStorage.removeItem('kendra_officer');
   };
 
   // Toggle English / Hindi
@@ -245,27 +248,24 @@ export default function App() {
     setLanguage((prev) => (prev === 'en' ? 'hi' : 'en'));
   };
 
-  // 1. HARDWARE ENFORCEMENT: If device MAC is not whitelisted, block access completely!
-  if (!isDeviceAuthorized) {
-    return (
-      <DeviceBlockedScreen
-        detectedMac={isSimulatingUnauthorized ? '74:D4:35:EE:99:FF' : currentMac}
-        onAuthorizeDevice={handleAuthorizeFromBlockedScreen}
-        onResetToDefaultMac={handleResetToDefaultMac}
-      />
-    );
-  }
-
-  // 2. USER AUTHENTICATION: If user is not logged in, show official login screen
+  // 1. Direct Login Page: Always accessible. Admin can log in from any system without MAC check.
+  // Operator validates MAC address along with credentials on login.
   if (!isAuthenticated) {
     return (
       <LoginScreen
         onLoginSuccess={handleLoginSuccess}
         currentMac={currentMac}
+        operators={operators}
         onClearCache={handleClearAllCache}
       />
     );
   }
+
+  // Ensure Admin cannot access Kisan registration tab
+  const effectiveTab: ActiveTab =
+    userRole === 'admin' && activeTab === 'farmer-registration'
+      ? 'status-approvals'
+      : activeTab;
 
   const featuredFarmer = registrations[0] || null;
 
@@ -277,28 +277,33 @@ export default function App() {
         language={language}
         onToggleLanguage={handleToggleLanguage}
         onLogout={handleLogout}
+        officerName={officerName}
+        userRole={userRole}
       />
 
       {/* Main Container Layout */}
       <div className="flex-1 flex w-full max-w-[1720px] mx-auto">
-        {/* Left Sidebar */}
+        {/* Left Sidebar partitioned by role */}
         <Sidebar
-          activeTab={activeTab}
+          activeTab={effectiveTab}
           onSelectTab={setActiveTab}
           pendingApprovalsCount={kpis.pendingApprovals}
+          userRole={userRole}
           onLogout={handleLogout}
         />
 
         {/* Center Main Stage Content */}
         <main className="flex-1 p-4 sm:p-5 overflow-x-hidden min-w-0">
-          {activeTab === 'farmer-registration' && (
+          {/* Operator Only: Kisan Pre-Registration */}
+          {userRole === 'operator' && effectiveTab === 'farmer-registration' && (
             <FarmerRegistrationView
               onRegisterSuccess={handleRegisterSuccess}
               language={language}
             />
           )}
 
-          {activeTab === 'status-approvals' && (
+          {/* Status & Approvals: Admin does approvals only, Operator can view status */}
+          {effectiveTab === 'status-approvals' && (
             <StatusApprovalsView
               registrations={registrations}
               onApprove={handleApprove}
@@ -307,7 +312,8 @@ export default function App() {
             />
           )}
 
-          {activeTab === 'issuance-counter' && (
+          {/* Issuance Counter */}
+          {effectiveTab === 'issuance-counter' && (
             <IssuanceCounterView
               initialFarmer={farmerForIssuance}
               onCompleteIssuance={handleCompleteIssuance}
@@ -315,24 +321,25 @@ export default function App() {
             />
           )}
 
-          {activeTab === 'inventory-depot' && (
+          {/* Inventory & Depot */}
+          {effectiveTab === 'inventory-depot' && (
             <InventoryDepotView inventory={inventory} />
           )}
 
-          {activeTab === 'reports-logs' && (
+          {/* Reports & DBT Logs */}
+          {effectiveTab === 'reports-logs' && (
             <ReportsLogsView transactions={transactions} />
           )}
 
-          {activeTab === 'device-whitelist' && (
-            <DeviceWhitelistView
+          {/* Admin Only: Operator Management with Hardware MAC Address */}
+          {userRole === 'admin' && effectiveTab === 'operator-management' && (
+            <OperatorManagementView
               currentMac={currentMac}
-              devices={whitelistedDevices}
-              onAddDevice={handleAddDevice}
-              onToggleStatus={handleToggleDeviceStatus}
-              onRemoveDevice={handleRemoveDevice}
-              onClearCache={handleClearAllCache}
-              onSimulateUnauthorizedMac={handleToggleSimulateUnauthorized}
-              isSimulatingUnauthorized={isSimulatingUnauthorized}
+              operators={operators}
+              onAddOperator={handleAddOperator}
+              onToggleStatus={handleToggleOperatorStatus}
+              onDeleteOperator={handleDeleteOperator}
+              onUpdateOperatorMac={handleUpdateOperatorMac}
             />
           )}
         </main>

@@ -7,6 +7,8 @@ interface HeaderProps {
   language: 'en' | 'hi';
   onToggleLanguage: () => void;
   onLogout: () => void;
+  officerName?: string;
+  userRole?: 'admin' | 'operator';
 }
 
 export const Header: React.FC<HeaderProps> = ({
@@ -14,6 +16,8 @@ export const Header: React.FC<HeaderProps> = ({
   language,
   onToggleLanguage,
   onLogout,
+  officerName = 'Dr. Rajesh Sharma',
+  userRole = 'admin',
 }) => {
   return (
     <header className="w-full bg-white border-b border-stone-200 sticky top-0 z-30 select-none shadow-xs">
@@ -94,11 +98,11 @@ export const Header: React.FC<HeaderProps> = ({
             </div>
             <div className="text-left">
               <div className="flex items-center gap-1">
-                <span className="text-xs font-bold text-stone-800">Dr. Rajesh Sharma</span>
+                <span className="text-xs font-bold text-stone-800">{officerName}</span>
                 <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
               </div>
               <p className="text-[10.5px] text-stone-500 font-medium">
-                Nodal Officer (Kendra 104) • Meerut, UP
+                {userRole === 'admin' ? 'Kendra Nodal Admin (Master)' : 'Counter Dispense Operator'} • Meerut #104
               </p>
             </div>
           </div>

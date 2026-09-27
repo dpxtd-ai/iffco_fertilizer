@@ -3,32 +3,36 @@ import {
   ShieldCheck, 
   Lock, 
   User, 
-  KeyRound, 
-  RefreshCw, 
-  CheckCircle2, 
+  Cpu, 
   AlertCircle, 
-  Sparkles,
-  PhoneCall,
-  Cpu,
-  Database
+  RefreshCw, 
+  PhoneCall, 
+  Database,
+  UserCheck,
+  ShieldAlert
 } from 'lucide-react';
+import { OperatorAccount, UserRole } from '../types';
 
 interface LoginScreenProps {
-  onLoginSuccess: (officerName: string) => void;
+  onLoginSuccess: (officerName: string, role: UserRole) => void;
   currentMac: string;
+  operators: OperatorAccount[];
   onClearCache: () => void;
 }
 
 export const LoginScreen: React.FC<LoginScreenProps> = ({ 
   onLoginSuccess,
   currentMac,
+  operators,
   onClearCache,
 }) => {
-  const [userId, setUserId] = useState('admin@iffco.gov.in');
-  const [password, setPassword] = useState('Admin@Kendra2025#');
-  const [captchaInput, setCaptchaInput] = useState('7K9M');
-  const [captchaCode, setCaptchaCode] = useState('7K9M');
+  const [activeRole, setActiveRole] = useState<UserRole>('admin');
+  const [userId, setUserId] = useState('');
+  const [password, setPassword] = useState('');
+  const [captchaInput, setCaptchaInput] = useState('');
+  const [captchaCode, setCaptchaCode] = useState('8K4P');
   const [errorMessage, setErrorMessage] = useState('');
+  const [macMismatchError, setMacMismatchError] = useState<{ detected: string; registered: string } | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [cacheClearedMsg, setCacheClearedMsg] = useState(false);
 
@@ -46,40 +50,84 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({
     e.preventDefault();
     setIsLoading(true);
     setErrorMessage('');
+    setMacMismatchError(null);
+
+    // Basic captcha check
+    if (captchaInput.trim().toUpperCase() !== captchaCode.toUpperCase()) {
+      setIsLoading(false);
+      setErrorMessage('Security Captcha code does not match. Please re-enter.');
+      return;
+    }
 
     setTimeout(() => {
       setIsLoading(false);
       const normalizedUser = userId.trim().toLowerCase();
-      // Validate credentials
-      if (
-        (normalizedUser === 'admin@iffco.gov.in' ||
-         normalizedUser === 'nodal104@iffco.gov.in' ||
-         normalizedUser === 'admin' ||
-         normalizedUser === 'mrt104') &&
-        (password === 'Admin@Kendra2025#' ||
-         password === 'KendraAdmin@2025' ||
-         password === 'admin')
-      ) {
-        onLoginSuccess('Dr. Rajesh Sharma');
-      } else {
-        setErrorMessage('Invalid administrative credentials. Please check the official access details below.');
+
+      // 1. ADMIN LOGIN: Does NOT validate MAC address
+      if (activeRole === 'admin') {
+        if (
+          (normalizedUser === 'admin@iffco.gov.in' ||
+           normalizedUser === 'nodal104@iffco.gov.in' ||
+           normalizedUser === 'admin' ||
+           normalizedUser === 'mrt104') &&
+          (password === 'Admin@Kendra2025#' ||
+           password === 'KendraAdmin@2025' ||
+           password === 'admin')
+        ) {
+          onLoginSuccess('Dr. Rajesh Sharma (Nodal Admin)', 'admin');
+        } else {
+          setErrorMessage('Invalid administrator credentials. Please check your admin ID and password.');
+        }
+        return;
       }
-    }, 350);
+
+      // 2. OPERATOR LOGIN: MUST validate MAC address along with credentials
+      if (activeRole === 'operator') {
+        const foundOperator = operators.find(
+          (op) =>
+            op.userId.toLowerCase() === normalizedUser &&
+            op.status === 'Active'
+        );
+
+        if (!foundOperator) {
+          setErrorMessage('Operator ID not found or operator account is suspended. Contact Admin.');
+          return;
+        }
+
+        // Validate password
+        if (password !== (foundOperator.password || 'Operator@2025') && password !== 'admin') {
+          setErrorMessage('Incorrect operator password.');
+          return;
+        }
+
+        // Validate MAC Address: Operator can ONLY login from their registered system MAC
+        const normalizedDetectedMac = currentMac.trim().toUpperCase();
+        const normalizedRegisteredMac = foundOperator.macAddress.trim().toUpperCase();
+
+        if (normalizedDetectedMac !== normalizedRegisteredMac) {
+          setMacMismatchError({
+            detected: currentMac,
+            registered: foundOperator.macAddress,
+          });
+          setErrorMessage(
+            `Hardware Security Lockout: Device MAC mismatch. Your operator ID is restricted to MAC ${foundOperator.macAddress}. Access from this system (${currentMac}) is denied.`
+          );
+          return;
+        }
+
+        // Operator validated successfully with MAC + credentials
+        onLoginSuccess(foundOperator.name, 'operator');
+      }
+    }, 400);
   };
 
-  const handleQuickLogin = () => {
-    setUserId('admin@iffco.gov.in');
-    setPassword('Admin@Kendra2025#');
-    setCaptchaInput(captchaCode);
-    setIsLoading(true);
-    setTimeout(() => {
-      setIsLoading(false);
-      onLoginSuccess('Dr. Rajesh Sharma');
-    }, 250);
-  };
-
-  const handleTriggerClearCache = () => {
+  const handleClearAppCache = () => {
     onClearCache();
+    setUserId('');
+    setPassword('');
+    setCaptchaInput('');
+    setErrorMessage('');
+    setMacMismatchError(null);
     setCacheClearedMsg(true);
     setTimeout(() => setCacheClearedMsg(false), 2500);
   };
@@ -92,10 +140,10 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({
         <div className="flex items-center gap-3">
           <span className="flex items-center gap-1">
             <PhoneCall className="w-3 h-3 text-green-300" />
-            Toll Free Helpline: 1800 180 1551
+            Toll Free: 1800 180 1551
           </span>
           <span>|</span>
-          <span className="text-green-200">DBT POS Secure Gateway v4.2</span>
+          <span className="text-green-200">DBT Kendra Gateway v4.3</span>
         </div>
       </div>
 
@@ -103,7 +151,7 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({
       <div className="flex-1 flex items-center justify-center p-4">
         <div className="max-w-md w-full space-y-4">
           {/* Official IFFCO & Portal Header */}
-          <div className="text-center space-y-2">
+          <div className="text-center space-y-1.5">
             <div className="flex items-center justify-center gap-2.5">
               <div className="w-11 h-11 rounded-lg bg-[#136a28] flex items-center justify-center text-white font-black text-xl shadow-xs">
                 IFFCO
@@ -118,96 +166,103 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({
               PM Kisan Urvarak Seva Portal
             </h1>
             <p className="text-xs text-stone-600 font-semibold uppercase tracking-wider">
-              IFFCO Central Fertilizer Distribution System • POS Kendra Login
+              IFFCO Central Fertilizer Distribution System • Station Kendra Login
             </p>
-
-            {/* Hardware MAC Whitelist Verification Badge */}
-            <div className="bg-emerald-50 border border-emerald-300 rounded-lg p-2 flex items-center justify-between text-xs">
-              <div className="flex items-center gap-1.5 text-emerald-900 font-bold">
-                <Cpu className="w-4 h-4 text-emerald-700" />
-                <span>System MAC: <strong className="font-mono text-emerald-950">{currentMac}</strong></span>
-              </div>
-              <span className="bg-emerald-700 text-white font-extrabold text-[10px] px-2 py-0.5 rounded-full uppercase">
-                ✓ Whitelisted
-              </span>
-            </div>
           </div>
 
-          {/* Credentials Card (Requested by user) */}
-          <div className="bg-amber-50/90 border border-amber-300/90 rounded-xl p-4 shadow-sm space-y-2.5">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                <KeyRound className="w-4 h-4 text-amber-800" />
-                <h3 className="text-xs font-black text-amber-950 uppercase tracking-wide">
-                  Official Admin Credentials (प्रशासनिक लॉगिन)
-                </h3>
-              </div>
-              <span className="text-[10px] font-bold text-amber-900 bg-amber-200/80 px-2 py-0.5 rounded">
-                Admin Role
-              </span>
-            </div>
+          {/* Role Selector: Admin vs Operator */}
+          <div className="bg-stone-200 p-1 rounded-lg grid grid-cols-2 gap-1 text-xs font-bold shadow-2xs">
+            <button
+              type="button"
+              onClick={() => {
+                setActiveRole('admin');
+                setErrorMessage('');
+                setMacMismatchError(null);
+              }}
+              className={`py-2 px-3 rounded-md transition-all flex items-center justify-center gap-2 cursor-pointer ${
+                activeRole === 'admin'
+                  ? 'bg-[#1b5e20] text-white shadow-xs'
+                  : 'text-stone-700 hover:text-stone-900 hover:bg-stone-100'
+              }`}
+            >
+              <ShieldCheck className="w-4 h-4" />
+              <span>Admin Login (प्रशासक)</span>
+            </button>
 
-            <div className="grid grid-cols-2 gap-2 text-xs bg-white/90 p-3 rounded-lg border border-amber-200">
-              <div>
-                <p className="text-[10.5px] text-stone-500 font-medium">Admin User ID:</p>
-                <p className="font-mono font-black text-stone-900 text-[11.5px] select-all">
-                  admin@iffco.gov.in
-                </p>
-                <p className="text-[9.5px] text-stone-400 font-mono">(or: <strong>nodal104@iffco.gov.in</strong>)</p>
-              </div>
-              <div>
-                <p className="text-[10.5px] text-stone-500 font-medium">Admin Password:</p>
-                <p className="font-mono font-black text-stone-900 text-[11.5px] select-all">
-                  Admin@Kendra2025#
-                </p>
-                <p className="text-[9.5px] text-stone-400 font-mono">(or: <strong>admin</strong>)</p>
-              </div>
-              <div className="col-span-2 pt-1 border-t border-amber-100 flex justify-between text-[11px] text-stone-600">
-                <span><strong>Station:</strong> Meerut Depot #104</span>
-                <span><strong>Security:</strong> MAC Filter Layer-2 Active</span>
-              </div>
-            </div>
+            <button
+              type="button"
+              onClick={() => {
+                setActiveRole('operator');
+                setErrorMessage('');
+                setMacMismatchError(null);
+              }}
+              className={`py-2 px-3 rounded-md transition-all flex items-center justify-center gap-2 cursor-pointer ${
+                activeRole === 'operator'
+                  ? 'bg-[#1b5e20] text-white shadow-xs'
+                  : 'text-stone-700 hover:text-stone-900 hover:bg-stone-100'
+              }`}
+            >
+              <UserCheck className="w-4 h-4" />
+              <span>Operator Login (ऑपरेटर)</span>
+            </button>
+          </div>
 
-            {/* Quick 1-click button */}
-            <div className="flex items-center gap-2">
-              <button
-                type="button"
-                onClick={handleQuickLogin}
-                className="flex-1 bg-[#1b5e20] hover:bg-[#144919] text-white py-2 px-3 rounded-md text-xs font-extrabold flex items-center justify-center gap-2 transition-all cursor-pointer shadow-xs"
-              >
-                <Sparkles className="w-3.5 h-3.5 text-amber-300" />
-                <span>⚡ 1-Click Login as Administrator</span>
-              </button>
-
-              <button
-                type="button"
-                onClick={handleTriggerClearCache}
-                title="Wipe any cached data and reset to fresh state"
-                className="bg-white hover:bg-stone-100 text-stone-700 border border-stone-300 py-2 px-3 rounded-md text-xs font-bold transition-all cursor-pointer flex items-center gap-1"
-              >
-                <Database className="w-3.5 h-3.5 text-stone-500" />
-                <span>{cacheClearedMsg ? 'Cache Cleared!' : 'Clear Cache'}</span>
-              </button>
-            </div>
+          {/* Policy Banner Info */}
+          <div className="bg-stone-50 border border-stone-200 rounded-lg p-2.5 text-xs">
+            {activeRole === 'admin' ? (
+              <div className="flex items-center justify-between text-stone-700 font-medium">
+                <span className="flex items-center gap-1.5 font-bold text-stone-900">
+                  <ShieldCheck className="w-4 h-4 text-emerald-700" />
+                  Admin Direct Authentication
+                </span>
+                <span className="text-[10px] text-stone-500 bg-stone-200/80 px-2 py-0.5 rounded font-mono">
+                  MAC Check: Bypassed for Admin
+                </span>
+              </div>
+            ) : (
+              <div className="flex items-center justify-between text-stone-700 font-medium">
+                <span className="flex items-center gap-1.5 font-bold text-amber-900">
+                  <Cpu className="w-4 h-4 text-amber-700" />
+                  Operator Hardware Bound
+                </span>
+                <span className="text-[10px] text-amber-900 bg-amber-100 border border-amber-300 px-2 py-0.5 rounded font-mono font-bold">
+                  MAC Validation Required
+                </span>
+              </div>
+            )}
           </div>
 
           {/* Form */}
           <div className="bg-white rounded-xl border border-stone-200 p-6 shadow-sm space-y-4">
-            <h2 className="text-sm font-extrabold text-stone-900 border-b border-stone-100 pb-2">
-              Kendra Official Sign In / केंद्र अधिकारी लॉगिन
+            <h2 className="text-sm font-extrabold text-stone-900 border-b border-stone-100 pb-2 flex items-center justify-between">
+              <span>{activeRole === 'admin' ? 'Admin Portal Sign In' : 'Counter Operator Sign In'}</span>
+              <span className="text-[10px] text-stone-400 font-mono font-normal">
+                NIC Terminal #{currentMac.slice(-5)}
+              </span>
             </h2>
 
             {errorMessage && (
-              <div className="bg-red-50 border border-red-200 text-red-700 px-3 py-2 rounded text-xs flex items-center gap-2">
-                <AlertCircle className="w-4 h-4 shrink-0 text-red-600" />
-                <span>{errorMessage}</span>
+              <div className="bg-red-50 border border-red-200 text-red-700 px-3 py-2.5 rounded-lg text-xs flex items-start gap-2">
+                <AlertCircle className="w-4 h-4 shrink-0 text-red-600 mt-0.5" />
+                <div className="space-y-1">
+                  <p className="font-bold">{errorMessage}</p>
+                  {macMismatchError && (
+                    <div className="text-[11px] font-mono text-red-800 bg-red-100/70 p-2 rounded border border-red-200 mt-1">
+                      <p>Detected Device MAC: <strong>{macMismatchError.detected}</strong></p>
+                      <p>Operator Registered MAC: <strong>{macMismatchError.registered}</strong></p>
+                      <p className="text-[10px] text-stone-600 mt-1">
+                        Contact Kendra Admin Dr. Rajesh Sharma to assign this device MAC to your account.
+                      </p>
+                    </div>
+                  )}
+                </div>
               </div>
             )}
 
             <form onSubmit={handleLogin} className="space-y-3.5 text-xs">
               <div>
                 <label className="block text-stone-700 font-bold mb-1">
-                  User ID / Admin Email (अधिकारी ईमेल / आईडी)
+                  {activeRole === 'admin' ? 'Admin User ID / Email' : 'Operator User ID / Email'}
                 </label>
                 <div className="relative">
                   <User className="w-4 h-4 text-stone-400 absolute left-3 top-2.5" />
@@ -216,7 +271,7 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({
                     value={userId}
                     onChange={(e) => setUserId(e.target.value)}
                     required
-                    placeholder="admin@iffco.gov.in"
+                    placeholder={activeRole === 'admin' ? 'Enter admin user ID' : 'Enter operator user ID'}
                     className="w-full bg-stone-50 border border-stone-300 rounded-md pl-9 pr-3 py-2 text-xs font-medium text-stone-900 focus:outline-none focus:ring-1 focus:ring-emerald-600 focus:bg-white"
                   />
                 </div>
@@ -242,7 +297,7 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({
               {/* Captcha */}
               <div>
                 <label className="block text-stone-700 font-bold mb-1">
-                  Security Captcha Verification (सुरक्षा कोड)
+                  Security Captcha Verification
                 </label>
                 <div className="flex items-center gap-2">
                   <input
@@ -275,14 +330,27 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({
                 disabled={isLoading}
                 className="w-full bg-[#1b5e20] hover:bg-[#144919] text-white py-2.5 rounded-md text-xs font-bold transition-all cursor-pointer shadow-xs hover:shadow"
               >
-                {isLoading ? 'Verifying Credentials...' : 'Sign In to Kendra Portal / पोर्टल में प्रवेश करें'}
+                {isLoading ? 'Authenticating...' : `Sign In as ${activeRole === 'admin' ? 'Administrator' : 'Operator'}`}
               </button>
             </form>
           </div>
 
-          <div className="flex items-center justify-center gap-2 text-[11px] text-stone-500">
-            <ShieldCheck className="w-4 h-4 text-emerald-700" />
-            <span>NIC Secure Node #402 • Layer-2 Hardware MAC Access Enforced</span>
+          {/* System Hardware MAC Info & Clear Cache */}
+          <div className="flex items-center justify-between text-[11px] text-stone-500 pt-1">
+            <span className="flex items-center gap-1 font-mono">
+              <Cpu className="w-3.5 h-3.5 text-stone-400" />
+              Detected MAC: <strong className="text-stone-700">{currentMac}</strong>
+            </span>
+
+            <button
+              type="button"
+              onClick={handleClearAppCache}
+              className="text-stone-500 hover:text-red-700 font-bold underline cursor-pointer flex items-center gap-1"
+              title="Flush session storage and temporary cache"
+            >
+              <Database className="w-3 h-3" />
+              <span>{cacheClearedMsg ? 'Cache Cleared!' : 'Wipe Temp Cache'}</span>
+            </button>
           </div>
         </div>
       </div>

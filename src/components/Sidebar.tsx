@@ -7,15 +7,16 @@ import {
   FileText, 
   Headphones, 
   LogOut,
-  Cpu,
+  UserCheck,
   ShieldCheck
 } from 'lucide-react';
-import { ActiveTab } from '../types';
+import { ActiveTab, UserRole } from '../types';
 
 interface SidebarProps {
   activeTab: ActiveTab;
   onSelectTab: (tab: ActiveTab) => void;
   pendingApprovalsCount: number;
+  userRole: UserRole;
   onLogout: () => void;
 }
 
@@ -23,27 +24,27 @@ export const Sidebar: React.FC<SidebarProps> = ({
   activeTab,
   onSelectTab,
   pendingApprovalsCount,
+  userRole,
   onLogout,
 }) => {
-  const menuItems: { id: ActiveTab; label: string; labelHindi: string; icon: React.ReactNode; badge?: number; tag?: string }[] = [
-    {
-      id: 'farmer-registration',
-      label: 'Farmer Pre-Registration',
-      labelHindi: 'कृषक पूर्व-पंजीकरण',
-      icon: <Users className="w-4 h-4 shrink-0" />,
-    },
+  // Navigation items partitioned by role
+  // Admin: does approvals only, manages operators + MAC devices, inventory, reports. NO Kisan registration!
+  // Operator: handles Farmer Pre-Registration, Issuance Counter, status view, inventory.
+  const adminMenuItems: { id: ActiveTab; label: string; labelHindi: string; icon: React.ReactNode; badge?: number; tag?: string }[] = [
     {
       id: 'status-approvals',
       label: 'Status & Approvals',
       labelHindi: 'स्थिति एवं अनुमोदन',
       icon: <CheckSquare className="w-4 h-4 shrink-0" />,
       badge: pendingApprovalsCount,
+      tag: 'Approval Desk',
     },
     {
-      id: 'issuance-counter',
-      label: 'Issuance Counter',
-      labelHindi: 'उर्वरक वितरण काउंटर',
-      icon: <Building2 className="w-4 h-4 shrink-0" />,
+      id: 'operator-management',
+      label: 'Operator & MAC Devices',
+      labelHindi: 'ऑपरेटर व डिवाइस प्रबंधन',
+      icon: <UserCheck className="w-4 h-4 shrink-0" />,
+      tag: 'Admin Only',
     },
     {
       id: 'inventory-depot',
@@ -57,25 +58,60 @@ export const Sidebar: React.FC<SidebarProps> = ({
       labelHindi: 'रिपोर्ट्स व डीबीटी लॉग',
       icon: <FileText className="w-4 h-4 shrink-0" />,
     },
+  ];
+
+  const operatorMenuItems: { id: ActiveTab; label: string; labelHindi: string; icon: React.ReactNode; badge?: number; tag?: string }[] = [
     {
-      id: 'device-whitelist',
-      label: 'Device MAC Whitelist',
-      labelHindi: 'डिवाइस मैक सुरक्षा',
-      icon: <Cpu className="w-4 h-4 shrink-0" />,
-      tag: 'Admin',
+      id: 'farmer-registration',
+      label: 'Farmer Pre-Registration',
+      labelHindi: 'कृषक पूर्व-पंजीकरण',
+      icon: <Users className="w-4 h-4 shrink-0" />,
+      tag: 'Entry Desk',
+    },
+    {
+      id: 'issuance-counter',
+      label: 'Issuance Counter',
+      labelHindi: 'उर्वरक वितरण काउंटर',
+      icon: <Building2 className="w-4 h-4 shrink-0" />,
+    },
+    {
+      id: 'status-approvals',
+      label: 'Verification Status',
+      labelHindi: 'पंजीकरण स्थिति',
+      icon: <CheckSquare className="w-4 h-4 shrink-0" />,
+      badge: pendingApprovalsCount,
+    },
+    {
+      id: 'inventory-depot',
+      label: 'Inventory & Depot',
+      labelHindi: 'भंडार एवं डिपो स्टॉक',
+      icon: <Package className="w-4 h-4 shrink-0" />,
     },
   ];
+
+  const menuItems = userRole === 'admin' ? adminMenuItems : operatorMenuItems;
 
   return (
     <aside className="w-64 bg-[#fafcfa] border-r border-stone-200/90 flex flex-col justify-between shrink-0 min-h-[calc(100vh-108px)] p-3 select-none">
       <div>
-        <div className="px-3 pt-2 pb-3">
-          <p className="text-[11px] font-bold text-stone-500 uppercase tracking-wider">
-            PORTAL OPERATIONS
-          </p>
+        <div className="px-3 pt-2 pb-2">
+          <div className="flex items-center justify-between">
+            <p className="text-[10px] font-bold text-stone-500 uppercase tracking-wider">
+              {userRole === 'admin' ? 'ADMIN CONSOLE' : 'OPERATOR STATION'}
+            </p>
+            <span
+              className={`text-[9px] font-black uppercase px-2 py-0.5 rounded-full ${
+                userRole === 'admin'
+                  ? 'bg-amber-100 text-amber-900 border border-amber-300'
+                  : 'bg-emerald-100 text-emerald-900 border border-emerald-300'
+              }`}
+            >
+              {userRole === 'admin' ? 'Nodal Admin' : 'Kiosk Operator'}
+            </span>
+          </div>
         </div>
 
-        <nav className="space-y-1">
+        <nav className="space-y-1 mt-2">
           {menuItems.map((item) => {
             const isActive = activeTab === item.id;
             return (
@@ -95,29 +131,31 @@ export const Sidebar: React.FC<SidebarProps> = ({
                   <span>{item.label}</span>
                 </div>
 
-                {item.tag && (
-                  <span
-                    className={`text-[9.5px] px-1.5 py-0.5 rounded font-extrabold uppercase tracking-wider ${
-                      isActive
-                        ? 'bg-emerald-800 text-emerald-200 border border-emerald-600'
-                        : 'bg-emerald-100 text-emerald-800'
-                    }`}
-                  >
-                    {item.tag}
-                  </span>
-                )}
+                <div className="flex items-center gap-1.5">
+                  {item.tag && (
+                    <span
+                      className={`text-[9px] px-1.5 py-0.5 rounded font-extrabold uppercase tracking-wider ${
+                        isActive
+                          ? 'bg-emerald-800 text-emerald-200 border border-emerald-600'
+                          : 'bg-stone-200/80 text-stone-700'
+                      }`}
+                    >
+                      {item.tag}
+                    </span>
+                  )}
 
-                {item.badge !== undefined && item.badge > 0 && (
-                  <span
-                    className={`text-[11px] px-1.5 py-0.5 rounded-full font-bold ${
-                      isActive
-                        ? 'bg-amber-400 text-stone-900'
-                        : 'bg-amber-100 text-amber-800'
-                    }`}
-                  >
-                    {item.badge}
-                  </span>
-                )}
+                  {item.badge !== undefined && item.badge > 0 && (
+                    <span
+                      className={`text-[11px] px-1.5 py-0.5 rounded-full font-bold ${
+                        isActive
+                          ? 'bg-amber-400 text-stone-900'
+                          : 'bg-amber-100 text-amber-800'
+                      }`}
+                    >
+                      {item.badge}
+                    </span>
+                  )}
+                </div>
               </button>
             );
           })}

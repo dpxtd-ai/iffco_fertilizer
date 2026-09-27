@@ -1,28 +1,25 @@
-import { WhitelistedDevice } from '../types';
+import { WhitelistedDevice, OperatorAccount } from '../types';
 
 const STORAGE_KEY_CURRENT_MAC = 'pm_kendra_client_mac';
-const STORAGE_KEY_WHITELIST = 'pm_kendra_mac_whitelist';
+const STORAGE_KEY_OPERATORS = 'pm_kendra_operators_list';
 
-// Generate a deterministic or persistent realistic MAC address for this system
+// Get or generate realistic MAC address for this system's NIC
 export function getOrCreateSystemMacAddress(): string {
-  // Check if session has a generated MAC
   let existing = sessionStorage.getItem(STORAGE_KEY_CURRENT_MAC);
   if (!existing) {
     // Generate realistic MAC format: XX:XX:XX:XX:XX:XX
     const hex = '0123456789ABCDEF';
     const randByte = () => hex[Math.floor(Math.random() * 16)] + hex[Math.floor(Math.random() * 16)];
-    // Common NIC vendor prefixes (Intel, Realtek, Dell)
     existing = `74:D4:35:${randByte()}:${randByte()}:${randByte()}`;
     sessionStorage.setItem(STORAGE_KEY_CURRENT_MAC, existing);
   }
   return existing;
 }
 
-// Initial authorized devices list - includes the default workstation
-export function getInitialWhitelistedDevices(): WhitelistedDevice[] {
+// Initial operators list managed by admin
+export function getInitialOperators(): OperatorAccount[] {
   const currentMac = getOrCreateSystemMacAddress();
-
-  const stored = localStorage.getItem(STORAGE_KEY_WHITELIST);
+  const stored = localStorage.getItem(STORAGE_KEY_OPERATORS);
   if (stored) {
     try {
       const parsed = JSON.parse(stored);
@@ -30,58 +27,52 @@ export function getInitialWhitelistedDevices(): WhitelistedDevice[] {
         return parsed;
       }
     } catch (e) {
-      console.error('Error parsing stored MAC whitelist', e);
+      console.error('Error parsing stored operators', e);
     }
   }
 
-  // Default clean seed: Current Authorized Admin Workstation + Meerut Counter POS #104
-  const defaultList: WhitelistedDevice[] = [
+  // Default initial operator assigned to this system's MAC
+  const defaultList: OperatorAccount[] = [
     {
-      id: 'DEV-001',
-      deviceName: 'Primary Nodal Admin Terminal (This System)',
+      id: 'OP-101',
+      name: 'Sunil Kumar (Kendra Operator)',
+      userId: 'operator104@iffco.gov.in',
+      password: 'Operator@2025',
+      contactNumber: '+91 94120 44552',
       macAddress: currentMac,
-      ipAddress: '10.24.112.45 (Local NIC Gateway)',
-      authorizedBy: 'Kendra Master Administrator',
-      addedAt: new Date().toISOString().split('T')[0],
+      counterId: 'Meerut Counter #1 (MRT-POS-0419)',
       status: 'Active',
-      lastSeen: 'Just now',
-      deviceType: 'Admin Terminal',
-      notes: 'Authorized Primary Kendra Station with Biometric Vault Access',
+      createdAt: '2025-01-10',
+      lastLogin: 'Active Today',
     },
     {
-      id: 'DEV-002',
-      deviceName: 'Meerut Kendra POS Counter Terminal #1',
+      id: 'OP-102',
+      name: 'Rajeev Verma (Mobile Dispenser)',
+      userId: 'rajeev.op@iffco.gov.in',
+      password: 'Operator@2025',
+      contactNumber: '+91 98371 11200',
       macAddress: '00:1A:2B:3C:4D:5E',
-      ipAddress: '10.24.112.50',
-      authorizedBy: 'Dr. Rajesh Sharma',
-      addedAt: '2025-01-15',
+      counterId: 'Sardhana Mobile Van #2',
       status: 'Active',
-      lastSeen: '24 Feb 2025',
-      deviceType: 'POS Kiosk',
-      notes: 'Point of sale counter terminal with thumbprint scanner',
+      createdAt: '2025-01-20',
+      lastLogin: 'Yesterday',
     }
   ];
 
-  localStorage.setItem(STORAGE_KEY_WHITELIST, JSON.stringify(defaultList));
+  localStorage.setItem(STORAGE_KEY_OPERATORS, JSON.stringify(defaultList));
   return defaultList;
 }
 
-export function saveWhitelistedDevices(devices: WhitelistedDevice[]): void {
-  localStorage.setItem(STORAGE_KEY_WHITELIST, JSON.stringify(devices));
-}
-
-export function isMacAddressWhitelisted(mac: string, devices: WhitelistedDevice[]): boolean {
-  if (!mac) return false;
-  const normalized = mac.trim().toUpperCase();
-  return devices.some(
-    (d) => d.macAddress.toUpperCase() === normalized && d.status === 'Active'
-  );
+export function saveOperators(operators: OperatorAccount[]): void {
+  localStorage.setItem(STORAGE_KEY_OPERATORS, JSON.stringify(operators));
 }
 
 // Clear all local app cache as requested
 export function clearAllApplicationCache(): void {
   sessionStorage.clear();
   localStorage.removeItem('kendra_auth');
+  localStorage.removeItem('kendra_role');
+  localStorage.removeItem('kendra_user_name');
   localStorage.removeItem('pm_kendra_registrations');
   localStorage.removeItem('pm_kendra_transactions');
   localStorage.removeItem('kendra_officer');

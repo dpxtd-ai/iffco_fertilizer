@@ -47,9 +47,6 @@ export const FarmerRegistrationView: React.FC<FarmerRegistrationViewProps> = ({
     otpVerified: false,
   });
 
-  const [isVerifyingUid, setIsVerifyingUid] = useState(false);
-  const [isScanningBiometric, setIsScanningBiometric] = useState(false);
-  const [isSendingOtp, setIsSendingOtp] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
 
   // Calculate age automatically when DOB changes
@@ -100,42 +97,6 @@ export const FarmerRegistrationView: React.FC<FarmerRegistrationViewProps> = ({
       aadhaarNumber: raw,
       aadhaarMasked: masked || 'XXXX - XXXX - 4829',
     }));
-  };
-
-  // Mock Aadhaar UID verification
-  const handleVerifyAadhaar = () => {
-    setIsVerifyingUid(true);
-    setTimeout(() => {
-      setIsVerifyingUid(false);
-      setFormData((prev) => ({
-        ...prev,
-        biometricVerified: true,
-      }));
-    }, 600);
-  };
-
-  // Mock OTP verification
-  const handleVerifyOtp = () => {
-    setIsSendingOtp(true);
-    setTimeout(() => {
-      setIsSendingOtp(false);
-      setFormData((prev) => ({
-        ...prev,
-        otpVerified: true,
-      }));
-    }, 500);
-  };
-
-  // Biometric scanner trigger
-  const handleScanBiometrics = () => {
-    setIsScanningBiometric(true);
-    setTimeout(() => {
-      setIsScanningBiometric(false);
-      setFormData((prev) => ({
-        ...prev,
-        biometricVerified: true,
-      }));
-    }, 700);
   };
 
   // Reset to empty / new registration
@@ -226,32 +187,31 @@ export const FarmerRegistrationView: React.FC<FarmerRegistrationViewProps> = ({
       tokenNumber: `UP-MRT-2025-${formData.aadhaarNumber?.slice(-4) || randomSuffix}`,
       nameAsPerAadhaar: formData.nameAsPerAadhaar || 'Kisan Beneficiary',
       nameHindi: formData.nameHindi || 'किसान लाभार्थी',
-      aadhaarNumber: formData.aadhaarNumber || '482911094829',
-      aadhaarMasked: formData.aadhaarMasked || 'XXXX - XXXX - 4829',
-      dob: formData.dob || '1976-08-14',
-      age: formData.age || 48,
+      aadhaarNumber: formData.aadhaarNumber || '',
+      aadhaarMasked: formData.aadhaarMasked || formData.aadhaarNumber || '',
+      dob: formData.dob || '1980-01-01',
+      age: formData.age || 45,
       gender: formData.gender || 'Male',
-      fatherOrHusbandName: formData.fatherOrHusbandName || 'Late Shri Hariram Yadav',
-      contactNumber: formData.contactNumber || '+91 98372 45812',
-      pmKisanId: formData.pmKisanId || 'UP / 2024 / 984321',
+      fatherOrHusbandName: formData.fatherOrHusbandName || '',
+      contactNumber: formData.contactNumber || '',
+      pmKisanId: formData.pmKisanId || '',
       quantityBags: bags,
       nanoUreaBottles: formData.nanoUreaBottles || Math.ceil(bags / 4),
       cropType: formData.cropType || 'Sugarcane',
-      landAcres: formData.landAcres || 2.0,
-      village: formData.village || 'Sardhana Dehat',
-      tehsil: formData.tehsil || 'Sardhana',
+      landAcres: formData.landAcres || 1.5,
+      village: formData.village || '',
+      tehsil: formData.tehsil || 'Meerut',
       district: formData.district || 'Meerut',
       state: formData.state || 'Uttar Pradesh',
-      pinCode: formData.pinCode || '250342',
-      khasraNumber: formData.khasraNumber || '142/3-B',
-      status: 'Approved',
-      createdAt: 'Just now (Live Verified)',
+      pinCode: formData.pinCode || '',
+      khasraNumber: formData.khasraNumber || '',
+      status: 'Pending Verification',
+      createdAt: 'Just now (Operator Submitted)',
       subsidyGovtShare: govtShare,
       farmerPayable: farmerShare,
-      biometricVerified: true,
-      otpVerified: true,
+      biometricVerified: false,
+      otpVerified: false,
       counterRef: 'MRT-POS-0419',
-      photoUrl: 'https://images.unsplash.com/photo-1544717305-2782549b5136?auto=format&fit=crop&w=600&q=80',
     };
 
     setErrorMessage('');
@@ -305,7 +265,7 @@ export const FarmerRegistrationView: React.FC<FarmerRegistrationViewProps> = ({
               </p>
               <div className="flex items-center gap-1.5 mt-0.5 text-[11px] text-emerald-800 font-semibold">
                 <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-                <span>Biometric Scanner: Connected</span>
+                <span>Station Kendra: Active Desk</span>
               </div>
             </div>
           </div>
@@ -315,7 +275,7 @@ export const FarmerRegistrationView: React.FC<FarmerRegistrationViewProps> = ({
         <div className="mt-3 pt-3 border-t border-stone-100 flex items-center justify-between">
           <span className="text-[11px] text-stone-500 flex items-center gap-1">
             <Info className="w-3.5 h-3.5 text-stone-400" />
-            UIDAI Aadhaar Vault API: Mode 2.1 (Demographic & Biometric eKYC)
+            Direct Verification: Mobile & Aadhaar Number Linked (No OTP / Biometric Required)
           </span>
           <div className="flex items-center gap-2">
             <button
@@ -366,8 +326,7 @@ export const FarmerRegistrationView: React.FC<FarmerRegistrationViewProps> = ({
             </div>
 
             <div className="bg-emerald-50 border border-emerald-200 text-emerald-800 text-[11.5px] font-bold px-2.5 py-1 rounded-md flex items-center gap-1.5">
-              <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
-              <span>UIDAI e-KYC Verified</span>
+              <span>Operator Desk Entry</span>
             </div>
           </div>
 
@@ -388,12 +347,11 @@ export const FarmerRegistrationView: React.FC<FarmerRegistrationViewProps> = ({
                   className="flex-1 bg-stone-50/70 border border-stone-300 rounded px-3 py-2 text-xs font-semibold text-stone-900 focus:outline-none focus:ring-1 focus:ring-emerald-600 focus:bg-white transition-all"
                 />
                 <div className="w-36 bg-blue-50/70 border border-blue-200/70 rounded px-2.5 py-2 text-xs font-semibold text-blue-950 truncate">
-                  {formData.nameHindi || 'रामेश्वर दयाल यादव'}
+                  {formData.nameHindi || 'हिंदी नाम'}
                 </div>
               </div>
-              <p className="text-[11px] text-emerald-700 font-semibold mt-1 flex items-center gap-1">
-                <CheckCircle2 className="w-3 h-3" />
-                Demographic match 99.4%
+              <p className="text-[11px] text-stone-500 font-medium mt-1">
+                Exact spelling as printed on physical Aadhaar card
               </p>
             </div>
 
@@ -402,38 +360,24 @@ export const FarmerRegistrationView: React.FC<FarmerRegistrationViewProps> = ({
               <label className="block text-xs font-bold text-stone-800 mb-1">
                 Aadhaar Number / आधार संख्या (UIDAI) <span className="text-red-500">*</span>
               </label>
-              <div className="flex items-center gap-2">
-                <div className="relative flex-1">
-                  <input
-                    type="text"
-                    value={formData.aadhaarMasked || ''}
-                    onChange={handleAadhaarChange}
-                    placeholder="XXXX - XXXX - 4829"
-                    maxLength={19}
-                    required
-                    className="w-full bg-stone-50/70 border border-stone-300 rounded pl-3 pr-8 py-2 text-xs font-mono font-bold text-stone-900 tracking-wider focus:outline-none focus:ring-1 focus:ring-emerald-600 focus:bg-white"
-                  />
-                  <button
-                    type="button"
-                    onClick={handleScanBiometrics}
-                    title="Scan Fingerprint"
-                    className="absolute right-2 top-2 text-stone-500 hover:text-emerald-700 cursor-pointer"
-                  >
-                    <Fingerprint className={`w-4 h-4 ${isScanningBiometric ? 'animate-pulse text-emerald-600' : ''}`} />
-                  </button>
-                </div>
-
-                <button
-                  type="button"
-                  onClick={handleVerifyAadhaar}
-                  className="bg-[#1b5e20] hover:bg-[#154a19] text-white px-3 py-2 rounded text-xs font-bold flex items-center gap-1.5 shadow-xs cursor-pointer transition-colors"
-                >
-                  <CheckCircle2 className="w-3.5 h-3.5" />
-                  <span>{isVerifyingUid ? 'Checking...' : 'Verified UID'}</span>
-                </button>
-              </div>
+              <input
+                type="text"
+                value={formData.aadhaarNumber || ''}
+                onChange={(e) => {
+                  const val = e.target.value.replace(/\D/g, '').slice(0, 12);
+                  setFormData({
+                    ...formData,
+                    aadhaarNumber: val,
+                    aadhaarMasked: val.length >= 8 ? `XXXX - XXXX - ${val.slice(8)}` : val,
+                  });
+                }}
+                placeholder="Enter 12-digit Aadhaar Number (e.g. 482911094829)"
+                maxLength={12}
+                required
+                className="w-full bg-stone-50/70 border border-stone-300 rounded px-3 py-2 text-xs font-mono font-bold text-stone-900 tracking-wider focus:outline-none focus:ring-1 focus:ring-emerald-600 focus:bg-white"
+              />
               <p className="text-[10.5px] text-stone-500 font-medium mt-1">
-                Last verified via Iris/Biometric on 24 Feb 2025
+                12-digit UIDAI number required for direct subsidy mapping
               </p>
             </div>
 
@@ -481,7 +425,7 @@ export const FarmerRegistrationView: React.FC<FarmerRegistrationViewProps> = ({
                   type="text"
                   value={formData.fatherOrHusbandName || ''}
                   onChange={(e) => setFormData({ ...formData, fatherOrHusbandName: e.target.value })}
-                  placeholder="Late Shri Hariram Yadav"
+                  placeholder="Father or Husband Name"
                   className="w-full bg-stone-50/70 border border-stone-300 rounded px-2.5 py-1.5 text-xs font-semibold text-stone-900 focus:outline-none focus:ring-1 focus:ring-emerald-600 focus:bg-white truncate"
                 />
               </div>
@@ -490,28 +434,18 @@ export const FarmerRegistrationView: React.FC<FarmerRegistrationViewProps> = ({
             {/* Field 5: Mobile Number */}
             <div>
               <label className="block text-xs font-bold text-stone-800 mb-1">
-                Mobile No. (आधार लिंक मोबाइल) <span className="text-red-500">*</span>
+                Mobile Number (मोबाइल नंबर) <span className="text-red-500">*</span>
               </label>
-              <div className="flex items-center gap-2">
-                <input
-                  type="text"
-                  value={formData.contactNumber || ''}
-                  onChange={(e) => setFormData({ ...formData, contactNumber: e.target.value })}
-                  placeholder="+91 98372 •••••"
-                  required
-                  className="flex-1 bg-stone-50/70 border border-stone-300 rounded px-3 py-2 text-xs font-semibold text-stone-900 focus:outline-none focus:ring-1 focus:ring-emerald-600 focus:bg-white font-mono"
-                />
-                <button
-                  type="button"
-                  onClick={handleVerifyOtp}
-                  className="bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border border-emerald-300 px-3 py-2 rounded text-xs font-bold flex items-center gap-1 cursor-pointer transition-colors"
-                >
-                  <FileCheck className="w-3.5 h-3.5 text-emerald-600" />
-                  <span>{isSendingOtp ? 'Validating...' : 'OTP OK'}</span>
-                </button>
-              </div>
+              <input
+                type="tel"
+                value={formData.contactNumber || ''}
+                onChange={(e) => setFormData({ ...formData, contactNumber: e.target.value })}
+                placeholder="Enter 10-digit mobile number (e.g. 9837245812)"
+                required
+                className="w-full bg-stone-50/70 border border-stone-300 rounded px-3 py-2 text-xs font-semibold text-stone-900 focus:outline-none focus:ring-1 focus:ring-emerald-600 focus:bg-white font-mono"
+              />
               <p className="text-[10.5px] text-stone-500 mt-1">
-                e-Sign OTP dispatched & authenticated via UIDAI Gateway
+                SMS dispatch & token updates sent to this number
               </p>
             </div>
 
@@ -763,7 +697,7 @@ export const FarmerRegistrationView: React.FC<FarmerRegistrationViewProps> = ({
               className="bg-[#1b5e20] hover:bg-[#144919] text-white px-6 py-2.5 rounded-md text-xs font-extrabold flex items-center gap-2 shadow-sm transition-all cursor-pointer hover:shadow"
             >
               <CheckCircle2 className="w-4 h-4" />
-              <span>सत्यापन पूर्ण करें एवं टोकन जारी करें / Verify & Issue DBT Token</span>
+              <span>पंजीकरण सबमिट करें (अनुमोदन हेतु) / Submit for Admin Approval</span>
             </button>
           </div>
         </div>
