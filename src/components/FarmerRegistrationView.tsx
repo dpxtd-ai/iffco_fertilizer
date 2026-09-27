@@ -176,8 +176,7 @@ export const FarmerRegistrationView: React.FC<FarmerRegistrationViewProps> = ({
   return (
     <div className="space-y-4">
       {/* Top Header Card */}
-      <div className="bg-white rounded-lg border border-stone-200/90 p-5 shadow-2xs">
-        <div className="flex flex-wrap items-start justify-between gap-4">
+      <div className="bg-white rounded-lg border border-stone-200/90 p-5 shadow-2xs"> 
           <div>
             {/* Session & Counter Ref badge */}
             <div className="flex items-center gap-2 mb-2 text-xs font-semibold">
@@ -188,7 +187,7 @@ export const FarmerRegistrationView: React.FC<FarmerRegistrationViewProps> = ({
               <span className="text-stone-600 font-mono text-[11px]">
                 Ref: <strong className="text-stone-800 font-bold">MRT-POS-0419</strong>
               </span>
-              <h3 className="text-[15px] font-bold text-stone-800 mt-0.5">
+              <h3 className="text-[12px] font-bold text-stone-800 mt-0.5">
                 Farmer Urea Pre-Registration Form
               </h3>
             </div>
@@ -199,8 +198,7 @@ export const FarmerRegistrationView: React.FC<FarmerRegistrationViewProps> = ({
                 नवीन किसान यूरिया पूर्व-पंजीकरण फॉर्म
               </h2>
             </marquee> 
-          </div> 
-        </div> 
+          </div>  
       </div>
 
       {errorMessage && (
@@ -372,7 +370,7 @@ export const FarmerRegistrationView: React.FC<FarmerRegistrationViewProps> = ({
               </span>
               <div>
                 <h4 className="text-[14.5px] font-extrabold text-stone-900">
-                  भूमि, यूरिया कोटा एवं सत्यापन पता / Land, Urea Quota & Verification Address
+                  भूमि, यूरिया कोटा एवं सत्यापन पता / Land, Urea Quota & Address
                 </h4>
               </div>
             </div> 
