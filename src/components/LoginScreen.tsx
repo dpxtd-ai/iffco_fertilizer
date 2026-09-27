@@ -193,11 +193,7 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({
           </div> 
 
           {/* Form */}
-          <div className="bg-white rounded-xl border border-stone-200 p-6 shadow-sm space-y-4">
-            <h2 className="text-sm font-extrabold text-stone-900 border-b border-stone-100 pb-2 flex items-center justify-between">
-              <span>{activeRole === 'admin' ? 'Admin Portal Sign In' : 'Counter Operator Sign In'}</span> 
-            </h2>
-
+          <div className="bg-white rounded-xl border border-stone-200 p-6 shadow-sm space-y-4"> 
             {errorMessage && (
               <div className="bg-red-50 border border-red-200 text-red-700 px-3 py-2.5 rounded-lg text-xs flex items-start gap-2">
                 <AlertCircle className="w-4 h-4 shrink-0 text-red-600 mt-0.5" />
@@ -304,7 +300,7 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({
 
       {/* Footer */}
       <footer className="bg-stone-100 border-t border-stone-200 text-stone-500 text-[11px] py-3 text-center">
-        © 2024 Department of Fertilizers, Ministry of Chemicals & Fertilizers, Govt. of India.
+        © 2026 Department of Fertilizers, Ministry of Chemicals & Fertilizers, Govt. of India.
       </footer>
     </div>
   );
