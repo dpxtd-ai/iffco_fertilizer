@@ -118,15 +118,7 @@ export const Header: React.FC<HeaderProps> = ({
               <Trash2 className="w-3.5 h-3.5 text-red-600" />
               <span>Wipe Cache</span>
             </button>
-          )}
-
-          <button
-            onClick={onLogout}
-            title="Log out of session"
-            className="hidden sm:inline-flex text-[11px] font-semibold text-stone-600 hover:text-red-700 bg-white hover:bg-red-50 border border-stone-300 hover:border-red-300 px-2.5 py-1.5 rounded-md transition-colors cursor-pointer"
-          >
-            Sign Out
-          </button>
+          )} 
         </div>
       </div>
 
