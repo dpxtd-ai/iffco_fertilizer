@@ -231,11 +231,11 @@ export const FarmerRegistrationView: React.FC<FarmerRegistrationViewProps> = ({
             {/* Session & Counter Ref badge */}
             <div className="flex items-center gap-2 mb-2 text-xs font-semibold">
               <span className="text-amber-800 bg-amber-50 px-2.5 py-0.5 rounded border border-amber-200/70 font-bold uppercase tracking-wider text-[11px]">
-                SESSION KHARIF/RABI 2025
+                SESSION KHARIF/RABI 2026
               </span>
               <span className="text-stone-300">•</span>
               <span className="text-stone-600 font-mono text-[11px]">
-                Counter Ref: <strong className="text-stone-800 font-bold">MRT-POS-0419</strong>
+                Ref: <strong className="text-stone-800 font-bold">MRT-POS-0419</strong>
               </span>
             </div>
 
@@ -244,10 +244,10 @@ export const FarmerRegistrationView: React.FC<FarmerRegistrationViewProps> = ({
               नवीन किसान यूरिया पूर्व-पंजीकरण फॉर्म
             </h2>
             <h3 className="text-[15px] font-bold text-stone-800 mt-0.5">
-              Farmer Urea Pre-Registration Form (Subsidized Distribution Counter)
+              Farmer Urea Pre-Registration Form
             </h3>
             <p className="text-xs text-stone-600 mt-1 max-w-2xl font-medium leading-relaxed">
-              Direct Benefit Transfer (DBT) integrated subsidized fertilizer allocation for verified landholder & tenant farmers under PM-PRANAM guidelines.
+              Direct Benefit Transfer (DBT) integrated fertilizer allocation for verified landholder & tenant farmers under PM-PRANAM guidelines.
             </p>
           </div> 
         </div> 
@@ -274,9 +274,6 @@ export const FarmerRegistrationView: React.FC<FarmerRegistrationViewProps> = ({
                 <h4 className="text-[14.5px] font-extrabold text-stone-900">
                   कृषक विवरण / Farmer Identity Details
                 </h4>
-                <p className="text-[11px] text-stone-500 font-medium">
-                  Validated through UIDAI Aadhaar Vault & PM-Kisan Database
-                </p>
               </div>
             </div> 
           </div>
@@ -402,7 +399,7 @@ export const FarmerRegistrationView: React.FC<FarmerRegistrationViewProps> = ({
               <label className="block text-xs font-bold text-stone-800 mb-1">
                 PM-Kisan ID / KCC खाता क्रमांक
               </label>
-              <div className="flex items-center gap-2">
+              <div>
                 <input
                   type="text"
                   value={formData.pmKisanId || ''}
@@ -427,9 +424,6 @@ export const FarmerRegistrationView: React.FC<FarmerRegistrationViewProps> = ({
                 <h4 className="text-[14.5px] font-extrabold text-stone-900">
                   भूमि, यूरिया कोटा एवं सत्यापन पता / Land, Urea Quota & Verification Address
                 </h4>
-                <p className="text-[11px] text-stone-500 font-medium">
-                  Calculated based on crop acreage & PM-PRANAM balanced fertilization policy
-                </p>
               </div>
             </div> 
           </div>
