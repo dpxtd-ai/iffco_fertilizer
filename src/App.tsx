@@ -12,6 +12,8 @@ import { StatusApprovalsView } from './components/StatusApprovalsView';
 import { IssuanceCounterView } from './components/IssuanceCounterView';
 import { InventoryDepotView } from './components/InventoryDepotView';
 import { ReportsLogsView } from './components/ReportsLogsView';
+import { DeviceWhitelistView } from './components/DeviceWhitelistView';
+import { DeviceBlockedScreen } from './components/DeviceBlockedScreen';
 import { TokenModal } from './components/TokenModal';
 import { LoginScreen } from './components/LoginScreen';
 import { Footer } from './components/Footer';
@@ -28,17 +30,33 @@ import {
   KendraKPIs,
   InventoryItem,
   DBTTransaction,
+  WhitelistedDevice,
 } from './types';
+import {
+  getOrCreateSystemMacAddress,
+  getInitialWhitelistedDevices,
+  saveWhitelistedDevices,
+  isMacAddressWhitelisted,
+  clearAllApplicationCache,
+} from './utils/deviceSecurity';
 
 export default function App() {
+  // Device Hardware Security: System MAC Address
+  const [currentMac, setCurrentMac] = useState<string>(() => getOrCreateSystemMacAddress());
+  const [whitelistedDevices, setWhitelistedDevices] = useState<WhitelistedDevice[]>(() =>
+    getInitialWhitelistedDevices()
+  );
+  const [isSimulatingUnauthorized, setIsSimulatingUnauthorized] = useState(false);
+
+  // Authentication State
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(() => {
-    // Check if session stored in localStorage
     return localStorage.getItem('kendra_auth') === 'true';
   });
 
   const [activeTab, setActiveTab] = useState<ActiveTab>('farmer-registration');
   const [language, setLanguage] = useState<'en' | 'hi'>('en');
 
+  // Clean application state (no dummy records)
   const [kpis, setKpis] = useState<KendraKPIs>(INITIAL_KPIS);
   const [registrations, setRegistrations] = useState<FarmerRegistration[]>(INITIAL_REGISTRATIONS);
   const [inventory, setInventory] = useState<InventoryItem[]>(INITIAL_INVENTORY);
@@ -49,6 +67,90 @@ export default function App() {
 
   // Direct hand-off from Registration or Status view to Issuance Counter
   const [farmerForIssuance, setFarmerForIssuance] = useState<FarmerRegistration | null>(null);
+
+  // Check if current system MAC address is whitelisted by Admin
+  const isDeviceAuthorized =
+    !isSimulatingUnauthorized && isMacAddressWhitelisted(currentMac, whitelistedDevices);
+
+  // Authorize / Whitelist device from blocked screen
+  const handleAuthorizeFromBlockedScreen = (deviceName: string) => {
+    const newDevice: WhitelistedDevice = {
+      id: `DEV-${Date.now().toString().slice(-4)}`,
+      deviceName: deviceName || 'Authorized Admin Terminal',
+      macAddress: currentMac,
+      ipAddress: '10.24.112.45',
+      authorizedBy: 'Master Administrator Override',
+      addedAt: new Date().toISOString().split('T')[0],
+      status: 'Active',
+      lastSeen: 'Just now',
+      deviceType: 'Admin Terminal',
+      notes: 'Whitelisted via Administrator Master Override',
+    };
+
+    const updated = [newDevice, ...whitelistedDevices];
+    setWhitelistedDevices(updated);
+    saveWhitelistedDevices(updated);
+    setIsSimulatingUnauthorized(false);
+  };
+
+  // Reset MAC address to original primary
+  const handleResetToDefaultMac = () => {
+    setIsSimulatingUnauthorized(false);
+    const primary = whitelistedDevices.find((d) => d.status === 'Active');
+    if (primary) {
+      setCurrentMac(primary.macAddress);
+    }
+  };
+
+  // Add a new device to whitelist (Admin action)
+  const handleAddDevice = (deviceData: Omit<WhitelistedDevice, 'id' | 'addedAt'>) => {
+    const newDevice: WhitelistedDevice = {
+      ...deviceData,
+      id: `DEV-${Date.now().toString().slice(-4)}`,
+      addedAt: new Date().toISOString().split('T')[0],
+    };
+    const updated = [newDevice, ...whitelistedDevices];
+    setWhitelistedDevices(updated);
+    saveWhitelistedDevices(updated);
+  };
+
+  // Toggle device active/blocked status
+  const handleToggleDeviceStatus = (id: string) => {
+    const updated = whitelistedDevices.map((d) =>
+      d.id === id ? { ...d, status: (d.status === 'Active' ? 'Blocked' : 'Active') as 'Active' | 'Blocked' } : d
+    );
+    setWhitelistedDevices(updated);
+    saveWhitelistedDevices(updated);
+  };
+
+  // Remove device from whitelist
+  const handleRemoveDevice = (id: string) => {
+    const updated = whitelistedDevices.filter((d) => d.id !== id);
+    setWhitelistedDevices(updated);
+    saveWhitelistedDevices(updated);
+  };
+
+  // Toggle simulate unauthorized MAC
+  const handleToggleSimulateUnauthorized = () => {
+    setIsSimulatingUnauthorized((prev) => !prev);
+  };
+
+  // Clear all application cache & reset state
+  const handleClearAllCache = () => {
+    clearAllApplicationCache();
+    setRegistrations([]);
+    setTransactions([]);
+    setKpis({
+      preRegistrationsToday: 0,
+      ureaIssuedBags: 0,
+      pendingApprovals: 0,
+      bufferStockBags: 12400,
+      targetQuotaBags: 4000,
+      consumedQuotaBags: 0,
+    });
+    setNewlyRegisteredFarmer(null);
+    setFarmerForIssuance(null);
+  };
 
   // Handle successful registration
   const handleRegisterSuccess = (farmer: FarmerRegistration) => {
@@ -93,15 +195,12 @@ export default function App() {
 
   // Complete bag issuance at POS counter
   const handleCompleteIssuance = (farmer: FarmerRegistration, txn: DBTTransaction) => {
-    // 1. Mark registration as Issued
     setRegistrations((prev) =>
       prev.map((r) => (r.id === farmer.id ? { ...r, status: 'Issued' } : r))
     );
 
-    // 2. Add transaction to DBT Logs
     setTransactions((prev) => [txn, ...prev]);
 
-    // 3. Update live stock and KPIs
     setKpis((prev) => ({
       ...prev,
       ureaIssuedBags: prev.ureaIssuedBags + farmer.quantityBags,
@@ -146,13 +245,29 @@ export default function App() {
     setLanguage((prev) => (prev === 'en' ? 'hi' : 'en'));
   };
 
-  // If user is not authenticated, show official login screen
-  if (!isAuthenticated) {
-    return <LoginScreen onLoginSuccess={handleLoginSuccess} />;
+  // 1. HARDWARE ENFORCEMENT: If device MAC is not whitelisted, block access completely!
+  if (!isDeviceAuthorized) {
+    return (
+      <DeviceBlockedScreen
+        detectedMac={isSimulatingUnauthorized ? '74:D4:35:EE:99:FF' : currentMac}
+        onAuthorizeDevice={handleAuthorizeFromBlockedScreen}
+        onResetToDefaultMac={handleResetToDefaultMac}
+      />
+    );
   }
 
-  // Find currently featured farmer for photo / preview
-  const featuredFarmer = registrations[0] || INITIAL_REGISTRATIONS[0];
+  // 2. USER AUTHENTICATION: If user is not logged in, show official login screen
+  if (!isAuthenticated) {
+    return (
+      <LoginScreen
+        onLoginSuccess={handleLoginSuccess}
+        currentMac={currentMac}
+        onClearCache={handleClearAllCache}
+      />
+    );
+  }
+
+  const featuredFarmer = registrations[0] || null;
 
   return (
     <div className="min-h-screen bg-[#f4f7f4] flex flex-col justify-between font-sans antialiased text-stone-900">
@@ -207,13 +322,26 @@ export default function App() {
           {activeTab === 'reports-logs' && (
             <ReportsLogsView transactions={transactions} />
           )}
+
+          {activeTab === 'device-whitelist' && (
+            <DeviceWhitelistView
+              currentMac={currentMac}
+              devices={whitelistedDevices}
+              onAddDevice={handleAddDevice}
+              onToggleStatus={handleToggleDeviceStatus}
+              onRemoveDevice={handleRemoveDevice}
+              onClearCache={handleClearAllCache}
+              onSimulateUnauthorizedMac={handleToggleSimulateUnauthorized}
+              isSimulatingUnauthorized={isSimulatingUnauthorized}
+            />
+          )}
         </main>
 
-        {/* Right Sidebar - exactly matching image for Farmer Pre-Registration */}
+        {/* Right Sidebar */}
         <div className="hidden xl:block p-4 sm:p-5 pl-0">
           <RightSidebar
-            currentFarmerPhoto={featuredFarmer.photoUrl}
-            currentFarmerName={featuredFarmer.nameAsPerAadhaar}
+            currentFarmerPhoto={featuredFarmer?.photoUrl}
+            currentFarmerName={featuredFarmer?.nameAsPerAadhaar}
           />
         </div>
       </div>

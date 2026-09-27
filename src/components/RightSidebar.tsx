@@ -8,8 +8,9 @@ interface RightSidebarProps {
 
 export const RightSidebar: React.FC<RightSidebarProps> = ({
   currentFarmerPhoto,
-  currentFarmerName = 'Rameshwar Dayal Yadav',
+  currentFarmerName,
 }) => {
+  const displayName = currentFarmerName || 'Kendra Biometric Station #104 (Ready)';
   return (
     <aside className="w-80 shrink-0 space-y-4 select-none">
       {/* 1. Biometric Snapshot Card */}
@@ -32,7 +33,7 @@ export const RightSidebar: React.FC<RightSidebarProps> = ({
         <div className="p-3 bg-stone-50 border-t border-stone-100 flex items-center justify-between text-xs">
           <div>
             <p className="text-[11px] font-bold text-stone-700">Kisan Aadhaar UID Match: <span className="text-emerald-700">100%</span></p>
-            <p className="text-[10px] text-stone-500 font-medium truncate max-w-[140px]">{currentFarmerName}</p>
+            <p className="text-[10px] text-stone-500 font-medium truncate max-w-[140px]">{displayName}</p>
           </div>
           <div className="text-right">
             <p className="text-[11px] font-bold text-stone-800">Meerut Division</p>

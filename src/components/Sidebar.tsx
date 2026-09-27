@@ -6,7 +6,9 @@ import {
   Package, 
   FileText, 
   Headphones, 
-  LogOut 
+  LogOut,
+  Cpu,
+  ShieldCheck
 } from 'lucide-react';
 import { ActiveTab } from '../types';
 
@@ -23,7 +25,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
   pendingApprovalsCount,
   onLogout,
 }) => {
-  const menuItems: { id: ActiveTab; label: string; labelHindi: string; icon: React.ReactNode; badge?: number }[] = [
+  const menuItems: { id: ActiveTab; label: string; labelHindi: string; icon: React.ReactNode; badge?: number; tag?: string }[] = [
     {
       id: 'farmer-registration',
       label: 'Farmer Pre-Registration',
@@ -55,6 +57,13 @@ export const Sidebar: React.FC<SidebarProps> = ({
       labelHindi: 'रिपोर्ट्स व डीबीटी लॉग',
       icon: <FileText className="w-4 h-4 shrink-0" />,
     },
+    {
+      id: 'device-whitelist',
+      label: 'Device MAC Whitelist',
+      labelHindi: 'डिवाइस मैक सुरक्षा',
+      icon: <Cpu className="w-4 h-4 shrink-0" />,
+      tag: 'Admin',
+    },
   ];
 
   return (
@@ -85,6 +94,18 @@ export const Sidebar: React.FC<SidebarProps> = ({
                   </span>
                   <span>{item.label}</span>
                 </div>
+
+                {item.tag && (
+                  <span
+                    className={`text-[9.5px] px-1.5 py-0.5 rounded font-extrabold uppercase tracking-wider ${
+                      isActive
+                        ? 'bg-emerald-800 text-emerald-200 border border-emerald-600'
+                        : 'bg-emerald-100 text-emerald-800'
+                    }`}
+                  >
+                    {item.tag}
+                  </span>
+                )}
 
                 {item.badge !== undefined && item.badge > 0 && (
                   <span

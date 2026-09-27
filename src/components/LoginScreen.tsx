@@ -8,20 +8,29 @@ import {
   CheckCircle2, 
   AlertCircle, 
   Sparkles,
-  PhoneCall
+  PhoneCall,
+  Cpu,
+  Database
 } from 'lucide-react';
 
 interface LoginScreenProps {
   onLoginSuccess: (officerName: string) => void;
+  currentMac: string;
+  onClearCache: () => void;
 }
 
-export const LoginScreen: React.FC<LoginScreenProps> = ({ onLoginSuccess }) => {
-  const [userId, setUserId] = useState('nodal104@iffco.gov.in');
-  const [password, setPassword] = useState('KendraAdmin@2025');
+export const LoginScreen: React.FC<LoginScreenProps> = ({ 
+  onLoginSuccess,
+  currentMac,
+  onClearCache,
+}) => {
+  const [userId, setUserId] = useState('admin@iffco.gov.in');
+  const [password, setPassword] = useState('Admin@Kendra2025#');
   const [captchaInput, setCaptchaInput] = useState('7K9M');
   const [captchaCode, setCaptchaCode] = useState('7K9M');
   const [errorMessage, setErrorMessage] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [cacheClearedMsg, setCacheClearedMsg] = useState(false);
 
   const refreshCaptcha = () => {
     const chars = '23456789ABCDEFGHJKLMNPQRSTUVWXYZ';
@@ -40,27 +49,39 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({ onLoginSuccess }) => {
 
     setTimeout(() => {
       setIsLoading(false);
+      const normalizedUser = userId.trim().toLowerCase();
       // Validate credentials
       if (
-        (userId.toLowerCase() === 'nodal104@iffco.gov.in' || userId.toLowerCase() === 'mrt104' || userId.toLowerCase() === 'admin') &&
-        (password === 'KendraAdmin@2025' || password === 'admin')
+        (normalizedUser === 'admin@iffco.gov.in' ||
+         normalizedUser === 'nodal104@iffco.gov.in' ||
+         normalizedUser === 'admin' ||
+         normalizedUser === 'mrt104') &&
+        (password === 'Admin@Kendra2025#' ||
+         password === 'KendraAdmin@2025' ||
+         password === 'admin')
       ) {
         onLoginSuccess('Dr. Rajesh Sharma');
       } else {
-        setErrorMessage('Invalid credentials. Please use the official demo login details provided below.');
+        setErrorMessage('Invalid administrative credentials. Please check the official access details below.');
       }
-    }, 400);
+    }, 350);
   };
 
   const handleQuickLogin = () => {
-    setUserId('nodal104@iffco.gov.in');
-    setPassword('KendraAdmin@2025');
+    setUserId('admin@iffco.gov.in');
+    setPassword('Admin@Kendra2025#');
     setCaptchaInput(captchaCode);
     setIsLoading(true);
     setTimeout(() => {
       setIsLoading(false);
       onLoginSuccess('Dr. Rajesh Sharma');
-    }, 300);
+    }, 250);
+  };
+
+  const handleTriggerClearCache = () => {
+    onClearCache();
+    setCacheClearedMsg(true);
+    setTimeout(() => setCacheClearedMsg(false), 2500);
   };
 
   return (
@@ -99,6 +120,17 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({ onLoginSuccess }) => {
             <p className="text-xs text-stone-600 font-semibold uppercase tracking-wider">
               IFFCO Central Fertilizer Distribution System • POS Kendra Login
             </p>
+
+            {/* Hardware MAC Whitelist Verification Badge */}
+            <div className="bg-emerald-50 border border-emerald-300 rounded-lg p-2 flex items-center justify-between text-xs">
+              <div className="flex items-center gap-1.5 text-emerald-900 font-bold">
+                <Cpu className="w-4 h-4 text-emerald-700" />
+                <span>System MAC: <strong className="font-mono text-emerald-950">{currentMac}</strong></span>
+              </div>
+              <span className="bg-emerald-700 text-white font-extrabold text-[10px] px-2 py-0.5 rounded-full uppercase">
+                ✓ Whitelisted
+              </span>
+            </div>
           </div>
 
           {/* Credentials Card (Requested by user) */}
@@ -107,44 +139,56 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({ onLoginSuccess }) => {
               <div className="flex items-center gap-2">
                 <KeyRound className="w-4 h-4 text-amber-800" />
                 <h3 className="text-xs font-black text-amber-950 uppercase tracking-wide">
-                  Authorized Admin Credentials (प्रशासनिक क्रेडेंशियल्स)
+                  Official Admin Credentials (प्रशासनिक लॉगिन)
                 </h3>
               </div>
               <span className="text-[10px] font-bold text-amber-900 bg-amber-200/80 px-2 py-0.5 rounded">
-                Official Demo Access
+                Admin Role
               </span>
             </div>
 
             <div className="grid grid-cols-2 gap-2 text-xs bg-white/90 p-3 rounded-lg border border-amber-200">
               <div>
-                <p className="text-[10.5px] text-stone-500 font-medium">User ID / Officer Email:</p>
+                <p className="text-[10.5px] text-stone-500 font-medium">Admin User ID:</p>
                 <p className="font-mono font-black text-stone-900 text-[11.5px] select-all">
-                  nodal104@iffco.gov.in
+                  admin@iffco.gov.in
                 </p>
-                <p className="text-[9.5px] text-stone-400 font-mono">(or User ID: <strong>MRT104</strong>)</p>
+                <p className="text-[9.5px] text-stone-400 font-mono">(or: <strong>nodal104@iffco.gov.in</strong>)</p>
               </div>
               <div>
-                <p className="text-[10.5px] text-stone-500 font-medium">Password:</p>
+                <p className="text-[10.5px] text-stone-500 font-medium">Admin Password:</p>
                 <p className="font-mono font-black text-stone-900 text-[11.5px] select-all">
-                  KendraAdmin@2025
+                  Admin@Kendra2025#
                 </p>
                 <p className="text-[9.5px] text-stone-400 font-mono">(or: <strong>admin</strong>)</p>
               </div>
               <div className="col-span-2 pt-1 border-t border-amber-100 flex justify-between text-[11px] text-stone-600">
-                <span><strong>Role:</strong> Nodal Officer (Dr. Rajesh Sharma)</span>
                 <span><strong>Station:</strong> Meerut Depot #104</span>
+                <span><strong>Security:</strong> MAC Filter Layer-2 Active</span>
               </div>
             </div>
 
             {/* Quick 1-click button */}
-            <button
-              type="button"
-              onClick={handleQuickLogin}
-              className="w-full bg-[#1b5e20] hover:bg-[#144919] text-white py-2 px-3 rounded-md text-xs font-extrabold flex items-center justify-center gap-2 transition-all cursor-pointer shadow-xs"
-            >
-              <Sparkles className="w-3.5 h-3.5 text-amber-300" />
-              <span>⚡ 1-Click Instant Login as Dr. Rajesh Sharma</span>
-            </button>
+            <div className="flex items-center gap-2">
+              <button
+                type="button"
+                onClick={handleQuickLogin}
+                className="flex-1 bg-[#1b5e20] hover:bg-[#144919] text-white py-2 px-3 rounded-md text-xs font-extrabold flex items-center justify-center gap-2 transition-all cursor-pointer shadow-xs"
+              >
+                <Sparkles className="w-3.5 h-3.5 text-amber-300" />
+                <span>⚡ 1-Click Login as Administrator</span>
+              </button>
+
+              <button
+                type="button"
+                onClick={handleTriggerClearCache}
+                title="Wipe any cached data and reset to fresh state"
+                className="bg-white hover:bg-stone-100 text-stone-700 border border-stone-300 py-2 px-3 rounded-md text-xs font-bold transition-all cursor-pointer flex items-center gap-1"
+              >
+                <Database className="w-3.5 h-3.5 text-stone-500" />
+                <span>{cacheClearedMsg ? 'Cache Cleared!' : 'Clear Cache'}</span>
+              </button>
+            </div>
           </div>
 
           {/* Form */}
@@ -163,7 +207,7 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({ onLoginSuccess }) => {
             <form onSubmit={handleLogin} className="space-y-3.5 text-xs">
               <div>
                 <label className="block text-stone-700 font-bold mb-1">
-                  User ID / Officer Email (अधिकारी ईमेल / आईडी)
+                  User ID / Admin Email (अधिकारी ईमेल / आईडी)
                 </label>
                 <div className="relative">
                   <User className="w-4 h-4 text-stone-400 absolute left-3 top-2.5" />
@@ -172,7 +216,7 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({ onLoginSuccess }) => {
                     value={userId}
                     onChange={(e) => setUserId(e.target.value)}
                     required
-                    placeholder="nodal104@iffco.gov.in"
+                    placeholder="admin@iffco.gov.in"
                     className="w-full bg-stone-50 border border-stone-300 rounded-md pl-9 pr-3 py-2 text-xs font-medium text-stone-900 focus:outline-none focus:ring-1 focus:ring-emerald-600 focus:bg-white"
                   />
                 </div>
@@ -238,7 +282,7 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({ onLoginSuccess }) => {
 
           <div className="flex items-center justify-center gap-2 text-[11px] text-stone-500">
             <ShieldCheck className="w-4 h-4 text-emerald-700" />
-            <span>NIC Secure Node #402 • UIDAI e-KYC Vault Protected</span>
+            <span>NIC Secure Node #402 • Layer-2 Hardware MAC Access Enforced</span>
           </div>
         </div>
       </div>

@@ -72,9 +72,23 @@ export interface DBTTransaction {
   status: 'Success' | 'Settled' | 'Audit Pending';
 }
 
+export interface WhitelistedDevice {
+  id: string;
+  deviceName: string;
+  macAddress: string; // standard format e.g. 74:D4:35:E2:81:09
+  ipAddress?: string;
+  authorizedBy: string;
+  addedAt: string;
+  status: 'Active' | 'Blocked';
+  lastSeen?: string;
+  deviceType: 'POS Kiosk' | 'Biometric Counter' | 'Admin Terminal' | 'Mobile Dispenser';
+  notes?: string;
+}
+
 export type ActiveTab = 
   | 'farmer-registration' 
   | 'status-approvals' 
   | 'issuance-counter' 
   | 'inventory-depot' 
-  | 'reports-logs';
+  | 'reports-logs'
+  | 'device-whitelist';
