@@ -145,7 +145,11 @@ export const Header: React.FC<HeaderProps> = ({
             <span className="text-stone-300">|</span> 
             <span>
               Pending Approvals: <strong className="text-amber-700 font-bold">{kpis.pendingApprovals}</strong>
-            </span> 
+            </span>
+            <span className="text-stone-300">|</span>
+            <span>
+              Buffer Stock: <strong className="text-emerald-800 font-bold">{kpis.bufferStockBags.toLocaleString()} Bags</strong>
+            </span>
           </div>
         </div>
 
