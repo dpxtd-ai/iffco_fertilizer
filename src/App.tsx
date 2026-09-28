@@ -370,7 +370,8 @@ export default function App() {
           pendingApprovalsCount={kpis.pendingApprovals}
           userRole={userRole}
           onLogout={handleLogout}
-          onOpenWipeModal={userRole === 'admin' ? () => setIsWipeModalOpen(true) : undefined}
+          // onOpenWipeModal={userRole === 'admin' ? () => setIsWipeModalOpen(true) : undefined}
+          onOpenWipeModal={() => setIsWipeModalOpen(true)}
         />
 
         {/* Center Main Stage Content */}
