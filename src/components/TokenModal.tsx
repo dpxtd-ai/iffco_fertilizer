@@ -113,7 +113,8 @@ export const TokenModal: React.FC<TokenModalProps> = ({
           {/* Payment & Approval Status Details */}
           <div className="border border-emerald-300 bg-emerald-50/70 rounded-md p-3 text-xs space-y-1.5 shadow-2xs">
             <div className="flex justify-between items-center font-bold">
-              <span className="text-stone-800">Amount Paid (शुल्क भुगतान):</span>
+              <span className="text-stone-800">Subsidy: 60% (सब्सिडी)</span>
+              <span className="text-stone-800">Amount Paid (शुल्क भुगतान):</span> 
               <span className="font-extrabold text-[#1b5e20] text-sm">
                 ₹{paidAmount}.00 (PAID)
               </span>
