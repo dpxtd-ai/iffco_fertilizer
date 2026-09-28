@@ -110,65 +110,219 @@ export const FarmerRegistrationView: React.FC<FarmerRegistrationViewProps> = ({
   }; 
 
   // Form submission
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    // -----------------------------
+    // Validation
+    // -----------------------------
 
     if (!formData.nameAsPerAadhaar?.trim()) {
       setErrorMessage('Please provide Name as per Aadhaar.');
       return;
     }
+
     if (!formData.contactNumber || formData.contactNumber.length < 10) {
-      setErrorMessage('Please provide a valid 10-digit Aadhaar-linked Mobile number.');
+      setErrorMessage(
+        'Please provide a valid 10-digit Aadhaar-linked Mobile number.'
+      );
       return;
     }
+
     if (!formData.quantityBags || formData.quantityBags <= 0) {
       setErrorMessage('Please specify required Urea bag quantity.');
       return;
     }
+
     if (!formData.village?.trim() || !formData.pinCode?.trim()) {
-      setErrorMessage('Please provide village and postal pincode for verification.');
+      setErrorMessage(
+        'Please provide village and postal pincode for verification.'
+      );
       return;
     }
 
+    // -----------------------------
+    // Calculate values
+    // -----------------------------
+
     const bags = formData.quantityBags || 5;
+
     const govtShare = bags * 2150;
+
     const farmerShare = bags * 266.5;
 
-    const randomSuffix = Math.floor(10000 + Math.random() * 90000);
+    // -----------------------------
+    // Generate token
+    // -----------------------------
+
+    const randomSuffix = Math.floor(
+      10000 + Math.random() * 90000
+    );
+
+    // -----------------------------
+    // Create registration record
+    // -----------------------------
+
     const newRecord: FarmerRegistration = {
       id: `FR-${Date.now()}`,
-      tokenNumber: `UP-MRT-2025-${formData.aadhaarNumber?.slice(-4) || randomSuffix}`,
-      nameAsPerAadhaar: formData.nameAsPerAadhaar || 'Kisan Beneficiary',
+
+      tokenNumber: `UP-MRT-2025-${
+        formData.aadhaarNumber?.slice(-4) || randomSuffix
+      }`,
+
+      nameAsPerAadhaar:
+        formData.nameAsPerAadhaar || 'Kisan Beneficiary',
+
       nameHindi: formData.nameHindi,
-      aadhaarNumber: formData.aadhaarNumber || '',
-      aadhaarMasked: formData.aadhaarMasked || formData.aadhaarNumber || '',
-      dob: formData.dob || '1980-01-01',
-      age: formData.age || 45,
-      gender: formData.gender || 'Male',
-      fatherOrHusbandName: formData.fatherOrHusbandName || '',
-      contactNumber: formData.contactNumber || '',
-      pmKisanId: formData.pmKisanId || '',
-      quantityBags: bags,
-      nanoUreaBottles: formData.nanoUreaBottles || Math.ceil(bags / 4),
-      cropType: formData.cropType || 'Sugarcane',
-      landAcres: formData.landAcres || 1.5,
-      village: formData.village || '',
-      tehsil: formData.tehsil || 'Meerut',
-      district: formData.district || 'Meerut',
-      state: formData.state || 'Uttar Pradesh',
-      pinCode: formData.pinCode || '',
-      khasraNumber: formData.khasraNumber || '',
-      status: 'Pending Verification',
-      createdAt: 'Just now (Operator Submitted)',
-      subsidyGovtShare: govtShare,
-      farmerPayable: farmerShare,
-      biometricVerified: false,
-      otpVerified: false,
-      counterRef: 'MRT-POS-0419',
+
+      aadhaarNumber:
+        formData.aadhaarNumber || '',
+
+      dob:
+        formData.dob || '1980-01-01',
+
+      age:
+        formData.age || 45,
+
+      gender:
+        formData.gender || 'Male',
+
+      fatherOrHusbandName:
+        formData.fatherOrHusbandName || '',
+
+      contactNumber:
+        formData.contactNumber || '',
+
+      pmKisanId:
+        formData.pmKisanId || '',
+
+      quantityBags:
+        bags, 
+
+      cropType:
+        formData.cropType || 'Sugarcane',
+
+      landAcres:
+        formData.landAcres || 1.5,
+
+      village:
+        formData.village || '',
+
+      tehsil:
+        formData.tehsil || 'Meerut',
+
+      district:
+        formData.district || 'Meerut',
+
+      state:
+        formData.state || 'Uttar Pradesh',
+
+      pinCode:
+        formData.pinCode || '',
+
+      khasraNumber:
+        formData.khasraNumber || '',
+
+      status:
+        'Pending Verification',
+
+      createdAt:
+        'Just now (Operator Submitted)',
+
+      farmerPayable:
+        farmerShare,
+
+      biometricVerified:
+        false,
+
+      counterRef:
+        'MRT-POS-0419',
     };
 
+    // -----------------------------
+    // Clear previous error
+    // -----------------------------
+
     setErrorMessage('');
-    onRegisterSuccess(newRecord);
+
+    try {
+
+      // -----------------------------
+      // Send data to n8n
+      // -----------------------------
+
+      const response = await fetch(
+        'https://ydnyan0804.app.n8n.cloud/webhook/submit',
+        {
+          method: 'POST',
+
+          headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json',
+          },
+
+          body: JSON.stringify(newRecord),
+        }
+      );
+
+      // -----------------------------
+      // Read n8n response
+      // -----------------------------
+
+      const result = await response.json();
+
+      console.log('n8n response:', result);
+
+      // -----------------------------
+      // Check HTTP error
+      // -----------------------------
+
+      if (!response.ok) {
+        setErrorMessage(
+          result?.message ||
+          `API request failed with status ${response.status}`
+        );
+
+        return;
+      }
+
+      // -----------------------------
+      // Check n8n success response
+      // -----------------------------
+
+      if (result?.success === true) {
+        // Use ID generated by n8n
+        const savedRecord: FarmerRegistration = {
+          ...newRecord,
+          id: result.id || newRecord.id,
+        };
+
+        // Registration successful
+        onRegisterSuccess(savedRecord);
+
+        return;
+      }
+
+      // -----------------------------
+      // n8n returned success:false
+      // -----------------------------
+
+      setErrorMessage(
+        result?.message ||
+        'Unable to save registration. Please try again.'
+      );
+
+    } catch (error) {
+
+      console.error(
+        'Error submitting farmer registration:',
+        error
+      );
+
+      setErrorMessage(
+        'Unable to save registration. Please check your internet connection and try again.'
+      );
+    }
   };
 
   const ureaBags = formData.quantityBags || 5;
