@@ -41,6 +41,7 @@ export const FarmerRegistrationView: React.FC<FarmerRegistrationViewProps> = ({
   });
 
   const [errorMessage, setErrorMessage] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   // Calculate age automatically when DOB changes
   const handleDobChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -104,6 +105,9 @@ export const FarmerRegistrationView: React.FC<FarmerRegistrationViewProps> = ({
   // Form submission
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    // Prevent duplicate submissions while the API request is running
+    if (isSubmitting) return;
 
     // -----------------------------
     // Validation
@@ -239,6 +243,7 @@ export const FarmerRegistrationView: React.FC<FarmerRegistrationViewProps> = ({
     // -----------------------------
 
     setErrorMessage('');
+    setIsSubmitting(true);
 
     try {
 
@@ -318,6 +323,9 @@ export const FarmerRegistrationView: React.FC<FarmerRegistrationViewProps> = ({
       setErrorMessage(
         'Unable to save registration. Please check your internet connection and try again.'
       );
+    } finally {
+      // Re-enable the submit button after the API response/error
+      setIsSubmitting(false);
     }
   };
 
@@ -482,12 +490,16 @@ export const FarmerRegistrationView: React.FC<FarmerRegistrationViewProps> = ({
               <label className="block text-xs font-bold text-stone-800 mb-1">
                 Mobile Number (मोबाइल नंबर) <span className="text-red-500">*</span>
               </label>
+              <div className="w-36 bg-blue-50/70 border border-blue-200/70 rounded px-2.5 py-2 text-xs font-semibold text-blue-950 truncate">
+                  '+91'
+              </div>
               <input
                 type="tel"
                 value={formData.contactNumber || ''}
                 onChange={(e) => setFormData({ ...formData, contactNumber: e.target.value })}
                 placeholder="Enter 10-digit mobile number (e.g. 9837245812)"
                 required
+                maxLength={10}
                 className="w-full bg-stone-50/70 border border-stone-300 rounded px-3 py-2 text-xs font-semibold text-stone-900 focus:outline-none focus:ring-1 focus:ring-emerald-600 focus:bg-white font-mono"
               /> 
             </div>
@@ -692,17 +704,56 @@ export const FarmerRegistrationView: React.FC<FarmerRegistrationViewProps> = ({
             <button
               type="button"
               onClick={handleResetForm}
-              className="px-4 py-2 rounded-md border border-stone-300 hover:bg-stone-50 text-stone-700 text-xs font-bold transition-colors cursor-pointer"
+              disabled={isSubmitting}
+              className={`px-4 py-2 rounded-md border text-stone-700 text-xs font-bold transition-colors ${
+                isSubmitting
+                  ? 'border-stone-200 bg-stone-100 text-stone-400 cursor-not-allowed'
+                  : 'border-stone-300 hover:bg-stone-50 cursor-pointer'
+              }`}
             >
               रीसेट करें / Reset
             </button>
 
             <button
               type="submit"
-              className="bg-[#1b5e20] hover:bg-[#144919] text-white px-6 py-2.5 rounded-md text-xs font-extrabold flex items-center gap-2 shadow-sm transition-all cursor-pointer hover:shadow"
+              disabled={isSubmitting}
+              aria-busy={isSubmitting}
+              className={`px-6 py-2.5 rounded-md text-xs font-extrabold flex items-center justify-center gap-2 shadow-sm transition-all ${
+                isSubmitting
+                  ? 'bg-stone-400 text-white cursor-not-allowed opacity-90'
+                  : 'bg-[#1b5e20] hover:bg-[#144919] text-white cursor-pointer hover:shadow'
+              }`}
             >
-              <CheckCircle2 className="w-4 h-4" />
-              <span>पंजीकरण सबमिट करें (अनुमोदन हेतु) / Submit for Admin Approval</span>
+              {isSubmitting ? (
+                <>
+                  <svg
+                    className="w-4 h-4 animate-spin"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    aria-hidden="true"
+                  >
+                    <circle
+                      className="opacity-25"
+                      cx="12"
+                      cy="12"
+                      r="10"
+                      stroke="currentColor"
+                      strokeWidth="4"
+                    />
+                    <path
+                      className="opacity-90"
+                      fill="currentColor"
+                      d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"
+                    />
+                  </svg>
+                  <span>कृपया प्रतीक्षा करें... / Submitting...</span>
+                </>
+              ) : (
+                <>
+                  <CheckCircle2 className="w-4 h-4" />
+                  <span>पंजीकरण सबमिट करें (अनुमोदन हेतु) / Submit for Admin Approval</span>
+                </>
+              )}
             </button>
           </div>
         </div>
