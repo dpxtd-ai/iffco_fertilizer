@@ -10,9 +10,9 @@ const STORAGE_KEY_FARMERS = 'pm_kendra_farmers_json';
 export function getStoredFarmers(): FarmerRegistration[] {
   try {
     const raw = localStorage.getItem(STORAGE_KEY_FARMERS);
-    if (raw) {
+    if (raw !== null) {
       const parsed = JSON.parse(raw);
-      if (Array.isArray(parsed) && parsed.length > 0) {
+      if (Array.isArray(parsed)) {
         return parsed;
       }
     }
@@ -20,7 +20,7 @@ export function getStoredFarmers(): FarmerRegistration[] {
     console.warn('Error reading stored farmers from cache:', err);
   }
 
-  // Fallback to repo's initial farmers.json
+  // Fallback to repo's farmers.json
   const initial = defaultFarmersData as FarmerRegistration[];
   try {
     localStorage.setItem(STORAGE_KEY_FARMERS, JSON.stringify(initial));
@@ -86,12 +86,15 @@ export function computeFarmersKPIs(records: FarmerRegistration[]): Pick<KendraKP
  * Normalize an external object from webhook into a strict FarmerRegistration
  */
 function normalizeFarmerRecord(item: Record<string, unknown>, index: number): FarmerRegistration {
-  const rawId = String(item.id || item._id || item.farmerId || `FR-${Date.now()}-${index}`);
+  const rawId = String(item.registrationId || item.id || item._id || item.farmerId || `FR-${Date.now()}-${index}`);
   const rawToken = String(item.tokenNumber || item.token || item.token_number || `UP-MRT-2025-${Math.floor(1000 + Math.random() * 9000)}`);
   const rawName = String(item.nameAsPerAadhaar || item.name || item.farmerName || item.farmer_name || 'Kisan Beneficiary');
   const rawHindi = String(item.nameHindi || item.name_hindi || '');
   const rawAadhaar = String(item.aadhaarNumber || item.aadhaar || item.aadhaar_number || '000000000000');
-  const rawMasked = String(item.aadhaarMasked || item.aadhaar_masked || (rawAadhaar.length >= 4 ? `XXXX - XXXX - ${rawAadhaar.slice(-4)}` : 'XXXX - XXXX - 0000'));
+  const cleanAadhaar = rawAadhaar.replace(/\s+/g, '');
+  const last4 = cleanAadhaar.length >= 4 ? cleanAadhaar.slice(-4) : '0000';
+  const rawMasked = String(item.aadhaarMasked || item.aadhaar_masked || `XXXX - XXXX - ${last4}`);
+  
   const rawDob = String(item.dob || '1980-01-01');
   const rawAge = Number(item.age || 45);
   const rawGender = (['Male', 'Female', 'Other'].includes(String(item.gender)) ? item.gender : 'Male') as 'Male' | 'Female' | 'Other';
@@ -102,7 +105,7 @@ function normalizeFarmerRecord(item: Record<string, unknown>, index: number): Fa
   const rawNano = Number(item.nanoUreaBottles || item.nano_urea || Math.ceil(rawBags / 4));
   const rawCrop = (['Sugarcane', 'Wheat / Cereal', 'Paddy', 'Mustard / Oilseeds', 'Vegetables'].includes(String(item.cropType)) ? item.cropType : 'Sugarcane') as FarmerRegistration['cropType'];
   const rawLand = Number(item.landAcres || item.land || 2.0);
-  const rawVillage = String(item.village || 'Meerut Village');
+  const rawVillage = String(item.village || 'Meerut');
   const rawTehsil = String(item.tehsil || 'Meerut');
   const rawDistrict = String(item.district || 'Meerut');
   const rawState = String(item.state || 'Uttar Pradesh');
@@ -110,19 +113,21 @@ function normalizeFarmerRecord(item: Record<string, unknown>, index: number): Fa
   const rawKhasra = String(item.khasraNumber || item.khasra || 'KH-101/1');
   
   let rawStatus: FarmerRegistration['status'] = 'Pending Verification';
-  const incomingStatus = String(item.status || '').toLowerCase();
+  const incomingStatus = String(item.status || '').trim().toLowerCase();
   if (incomingStatus.includes('approv')) {
     rawStatus = 'Approved';
   } else if (incomingStatus.includes('issue')) {
     rawStatus = 'Issued';
   } else if (incomingStatus.includes('flag')) {
     rawStatus = 'Flagged';
+  } else {
+    rawStatus = 'Pending Verification';
   }
 
   const rawCreatedAt = String(item.createdAt || item.created_at || 'Recently Saved');
   const rawGovtShare = Number(item.subsidyGovtShare || rawBags * 2150);
   const rawFarmerPayable = Number(item.farmerPayable || rawBags * 266.5);
-  const rawBio = Boolean(item.biometricVerified ?? true);
+  const rawBio = Boolean(item.biometricVerified ?? false);
   const rawOtp = Boolean(item.otpVerified ?? true);
 
   return {
@@ -160,15 +165,15 @@ function normalizeFarmerRecord(item: Record<string, unknown>, index: number): Fa
 
 /**
  * Fetch all updated farmer records from n8n webhook:
- * https://ydnyan0804.app.n8n.cloud/webhook-test/farmer
+ * https://ydnyan0804.app.n8n.cloud/webhook/farmer
  *
  * Runs once every login (Admin or Operator).
- * Gracefully falls back to cached/repo JSON data if the webhook endpoint is inactive/not running.
+ * Clears old cached data and maps ONLY with the API response data.
  */
 export async function fetchFarmersFromWebhook(): Promise<{ success: boolean; records: FarmerRegistration[]; source: 'webhook' | 'cache' }> {
   try {
     const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 6000); // 6s timeout
+    const timeoutId = setTimeout(() => controller.abort(), 8000); // 8s timeout
 
     const res = await fetch(WEBHOOK_GET_URL, {
       method: 'GET',
@@ -196,24 +201,28 @@ export async function fetchFarmersFromWebhook(): Promise<{ success: boolean; rec
           rawList = obj.records;
         } else if (Array.isArray(obj.result)) {
           rawList = obj.result;
+        } else if (obj.registrationId || obj.tokenNumber || obj.nameAsPerAadhaar || obj.id || obj.aadhaarNumber) {
+          // Single farmer record returned
+          rawList = [obj];
         }
       }
 
-      if (rawList.length > 0) {
-        const normalized = rawList.map((item, idx) =>
-          normalizeFarmerRecord((item || {}) as Record<string, unknown>, idx)
-        );
+      // Clear all old cache and map ONLY with API response data
+      localStorage.removeItem(STORAGE_KEY_FARMERS);
 
-        // Update local storage JSON cache with latest records from webhook
-        saveStoredFarmers(normalized);
-        return { success: true, records: normalized, source: 'webhook' };
-      }
+      const normalized = rawList.map((item, idx) =>
+        normalizeFarmerRecord((item || {}) as Record<string, unknown>, idx)
+      );
+
+      // Save only the API response data into local storage / JSON cache
+      saveStoredFarmers(normalized);
+      return { success: true, records: normalized, source: 'webhook' };
     }
   } catch (err) {
-    console.info('Webhook fetch notice (using cached farmers JSON):', err);
+    console.info('Webhook fetch notice:', err);
   }
 
-  // Fallback to locally cached JSON data from repo / localStorage
+  // Fallback to locally cached JSON data
   const cached = getStoredFarmers();
   return { success: false, records: cached, source: 'cache' };
 }

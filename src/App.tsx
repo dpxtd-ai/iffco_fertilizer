@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Header } from './components/Header';
 import { Sidebar } from './components/Sidebar';
 import { RightSidebar } from './components/RightSidebar';
@@ -101,6 +101,22 @@ export default function App() {
 
   // Admin Wipe Cache Modal state - visible ONLY after Admin login
   const [isWipeModalOpen, setIsWipeModalOpen] = useState(false);
+
+  // On mount or when authenticated, fetch from webhook, clear old cache, and map only with API response
+  useEffect(() => {
+    if (isAuthenticated) {
+      fetchFarmersFromWebhook().then((res) => {
+        if (res.success) {
+          setRegistrations(res.records);
+          const dynamicKPIs = computeFarmersKPIs(res.records);
+          setKpis((prev) => ({
+            ...prev,
+            ...dynamicKPIs,
+          }));
+        }
+      });
+    }
+  }, [isAuthenticated]);
 
   // Operator Management Handlers (Admin action to add operator with MAC and details)
   const handleAddOperator = (operatorData: Omit<OperatorAccount, 'id' | 'createdAt'>) => {
@@ -282,9 +298,9 @@ export default function App() {
       setActiveTab('status-approvals');
     }
 
-    // Every login hit once to fetch latest updated records from webhook
+    // Every login hit once to fetch latest updated records from webhook, clear old cache, and map only with API response
     fetchFarmersFromWebhook().then((res) => {
-      if (res.records && res.records.length > 0) {
+      if (res.success) {
         setRegistrations(res.records);
         const dynamicKPIs = computeFarmersKPIs(res.records);
         setKpis((prev) => ({
