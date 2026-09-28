@@ -3,7 +3,6 @@ import {
   X, 
   CreditCard, 
   CheckCircle2, 
-  QrCode, 
   ShieldCheck, 
   AlertCircle 
 } from 'lucide-react';
@@ -81,95 +80,22 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
               <span className="text-[10px] font-bold text-stone-500 uppercase">Village / Tehsil</span>
               <p className="font-semibold text-stone-700 truncate">{farmer.village || 'Meerut'}</p>
             </div>
+            <div>
+              <span className="text-[10px] font-bold text-stone-500 uppercase">FEE PAYABLE / कुल देय राशि</span>
+              <p className="font-semibold text-stone-700 truncate">₹{amount}.00</p>
+            </div>
           </div>
 
           {/* Payment Card with Barcode & Amount */}
           <div className="border-2 border-emerald-300/80 bg-emerald-50/40 rounded-xl p-4 text-center space-y-3">
-            <div>
-              <span className="text-[11px] font-bold uppercase tracking-wider text-stone-600">
-                FEE PAYABLE / कुल देय राशि
-              </span>
-              <div className="text-3xl font-black text-[#1b5e20] tracking-tight mt-0.5">
-                ₹{amount}.00
-              </div>
-              <p className="text-[11px] text-emerald-800 font-semibold">
-                Kisan DBT E-Registration & Verification Processing Charge
-              </p>
-            </div>
-
-            {/* Dummy Payment Barcode / QR Code Graphic */}
-            <div className="bg-white border border-stone-300 rounded-lg p-3 max-w-xs mx-auto shadow-2xs space-y-2">
-              <div className="flex items-center justify-between text-[10px] font-bold text-stone-500 uppercase tracking-wider pb-1 border-b border-dashed border-stone-200">
-                <span className="flex items-center gap-1 text-emerald-800">
-                  <QrCode className="w-3.5 h-3.5" />
-                  BHIM UPI / POS BHARATQR
-                </span>
-                <span>INSTANT PAY</span>
-              </div>
-
-              {/* Dummy QR Code Vector Pattern */}
-              <div className="flex items-center justify-center p-2 bg-stone-50 rounded border border-stone-200">
-                <svg
-                  viewBox="0 0 100 100"
-                  className="w-32 h-32 text-stone-900 fill-current"
-                  aria-label="Payment Barcode QR"
-                >
-                  {/* Outer corner top-left */}
-                  <rect x="5" y="5" width="28" height="28" fill="#1b5e20" rx="3" />
-                  <rect x="9" y="9" width="20" height="20" fill="white" rx="2" />
-                  <rect x="13" y="13" width="12" height="12" fill="#1b5e20" rx="1" />
-
-                  {/* Outer corner top-right */}
-                  <rect x="67" y="5" width="28" height="28" fill="#1b5e20" rx="3" />
-                  <rect x="71" y="9" width="20" height="20" fill="white" rx="2" />
-                  <rect x="75" y="13" width="12" height="12" fill="#1b5e20" rx="1" />
-
-                  {/* Outer corner bottom-left */}
-                  <rect x="5" y="67" width="28" height="28" fill="#1b5e20" rx="3" />
-                  <rect x="9" y="71" width="20" height="20" fill="white" rx="2" />
-                  <rect x="13" y="75" width="12" height="12" fill="#1b5e20" rx="1" />
-
-                  {/* Dummy QR Data modules */}
-                  <rect x="38" y="10" width="6" height="6" fill="#1b5e20" />
-                  <rect x="48" y="10" width="6" height="6" fill="#1b5e20" />
-                  <rect x="58" y="10" width="6" height="6" fill="#1b5e20" />
-                  <rect x="38" y="20" width="6" height="6" fill="#1b5e20" />
-                  <rect x="48" y="26" width="6" height="6" fill="#1b5e20" />
-                  <rect x="58" y="20" width="6" height="6" fill="#1b5e20" />
-
-                  {/* Center branding square */}
-                  <rect x="40" y="40" width="20" height="20" fill="#1b5e20" rx="2" />
-                  <text x="50" y="54" fontSize="10" fontWeight="900" fill="white" textAnchor="middle" fontFamily="sans-serif">₹</text>
-
-                  {/* Lower data blocks */}
-                  <rect x="38" y="67" width="6" height="6" fill="#1b5e20" />
-                  <rect x="48" y="73" width="6" height="6" fill="#1b5e20" />
-                  <rect x="58" y="67" width="6" height="6" fill="#1b5e20" />
-                  <rect x="67" y="48" width="6" height="6" fill="#1b5e20" />
-                  <rect x="77" y="48" width="6" height="6" fill="#1b5e20" />
-                  <rect x="87" y="48" width="6" height="6" fill="#1b5e20" />
-                  <rect x="67" y="67" width="6" height="6" fill="#1b5e20" />
-                  <rect x="77" y="77" width="6" height="6" fill="#1b5e20" />
-                  <rect x="87" y="67" width="6" height="6" fill="#1b5e20" />
-                  <rect x="87" y="87" width="6" height="6" fill="#1b5e20" />
-                </svg>
-              </div>
-
-              {/* Dummy POS Linear Barcode */}
-              <div className="pt-1">
-                <div className="flex justify-center items-center gap-0.5 py-0.5 text-stone-900">
-                  {[3, 1, 4, 1, 2, 4, 1, 3, 2, 1, 4, 2, 1, 3, 4, 1, 2, 3, 1, 4, 2, 1, 3].map((w, i) => (
-                    <div
-                      key={i}
-                      className="bg-stone-900 h-6"
-                      style={{ width: `${w * 1.5}px` }}
-                    />
-                  ))}
-                </div>
-                <p className="text-[9.5px] font-mono text-stone-500 tracking-wider">
-                  *PAY-100-{farmer.tokenNumber?.slice(-4) || '2026'}*
-                </p>
-              </div>
+             
+            {/* Final Payment Barcode / QR Code */}
+            <div className="max-w-xs mx-auto shadow-sm rounded-xl overflow-hidden bg-white border border-stone-200">
+              <img
+                src="/payment-barcode.svg"
+                alt="BHIM UPI / POS BharatQR Payment Barcode"
+                className="w-full h-auto block select-none"
+              />
             </div>
 
             <p className="text-[10.5px] text-stone-500 font-medium">
@@ -193,10 +119,7 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
                 placeholder="e.g. UPI/2026/8947239482 or POS-TXN-7482"
                 required
                 className="w-full bg-stone-50/80 border border-stone-300 rounded px-3 py-2 text-xs font-mono font-bold text-stone-900 tracking-wide focus:outline-none focus:ring-1 focus:ring-emerald-600 focus:bg-white"
-              />
-              <p className="text-[10.5px] text-stone-500 mt-1">
-                Please enter the 10-18 digit transaction reference / UTR from payment receipt to proceed.
-              </p>
+              /> 
             </div>
 
             {errorMsg && (
@@ -204,12 +127,7 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
                 <AlertCircle className="w-4 h-4 shrink-0 text-red-600" />
                 <span>{errorMsg}</span>
               </div>
-            )}
-
-            <div className="flex items-center gap-1.5 text-[10.5px] text-stone-500 pt-1">
-              <ShieldCheck className="w-3.5 h-3.5 text-emerald-700 shrink-0" />
-              <span>Payment validated via DBT Real-time Settlement Gateway</span>
-            </div>
+            )} 
 
             {/* Modal Actions */}
             <div className="pt-2 flex items-center justify-end gap-2.5 border-t border-stone-200">
