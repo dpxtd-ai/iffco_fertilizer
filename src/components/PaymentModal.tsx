@@ -33,14 +33,15 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
 
   const upiId = '8185810817@upi';
   const merchantName = 'Farmer Registration';
+  const narration = `Urea Payment - ${farmer.tokenNumber}`;
 
   // Dynamic UPI payment URL
-  // Amount comes from the existing "amount" prop
-  const upiUrl =
-    `upi://pay?pa=${encodeURIComponent(upiId)}` +
-    `&pn=${encodeURIComponent(merchantName)}` +
-    `&am=${Number(amount).toFixed(2)}` +
-    `&cu=INR`;
+    const upiUrl =
+      `upi://pay?pa=${encodeURIComponent(upiId)}` +
+      `&pn=${encodeURIComponent(merchantName)}` +
+      `&am=${Number(amount).toFixed(2)}` +
+      `&cu=INR` +
+      `&tn=${encodeURIComponent(narration)}`;
 
   const handleProceed = (e: React.FormEvent) => {
     e.preventDefault();
@@ -158,32 +159,20 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
               PAYMENT CARD WITH REAL UPI QR
           -------------------------------------------------- */}
 
-          <div className="border-2 border-emerald-300/80 bg-emerald-50/40 rounded-xl p-4 text-center space-y-3">
-
-            // {/* UPI QR Container */}
-            // <div className="max-w-xs mx-auto shadow-sm rounded-xl overflow-hidden bg-white border border-stone-200 p-4">
-
-              
+          <div className="border-2 border-emerald-300/80 bg-emerald-50/40 rounded-xl p-4 text-center space-y-3"> 
               {/* REAL DYNAMIC UPI QR CODE */}
-              <div className="flex justify-center bg-white p-2 rounded-lg">
-
+              <div> 
                 <QRCodeCanvas
                   value={upiUrl}
                   size={220}
                   level="H"
                   includeMargin={true}
-                />
-
+                /> 
               </div>  
-
-            // </div>
-
-
-            {/* QR Instructions */}
-            <p className="text-[10.5px] text-stone-500 font-medium">
-              Scan with any UPI App (BHIM, PhonePe, Google Pay, Paytm)
-            </p>
-
+              {/* QR Instructions */}
+              <p className="text-[10.5px] text-stone-500 font-medium">
+                Scan with any UPI App (BHIM, PhonePe, Google Pay, Paytm)
+              </p> 
           </div>
 
 
