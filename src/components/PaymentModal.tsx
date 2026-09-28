@@ -157,21 +157,22 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
               PAYMENT CARD WITH REAL UPI QR
           -------------------------------------------------- */}
 
-         {/* <div className="border-2 border-emerald-300/80 bg-emerald-50/40 rounded-xl p-4 text-center space-y-3"> */}
-          <div className="flex justify-center items-center"> 
-              {/* REAL DYNAMIC UPI QR CODE */}
-              <div className="bg-white p-3 rounded-lg shadow-sm"> 
-                <QRCodeCanvas
-                  value={upiUrl}
-                  size={220}
-                  level="H"
-                  includeMargin={true}
-                /> 
-              </div>  
-              {/* QR Instructions */}
-              <p className="text-[10.5px] text-stone-500 font-medium">
-                Scan with any UPI App (BHIM, PhonePe, Google Pay, Paytm)
-              </p> 
+          <div className="border-2 border-emerald-300/80 bg-emerald-50/40 rounded-xl p-4 text-center space-y-3"> 
+            <div className="flex justify-center items-center"> 
+                {/* REAL DYNAMIC UPI QR CODE */}
+                <div className="bg-white p-3 rounded-lg shadow-sm"> 
+                  <QRCodeCanvas
+                    value={upiUrl}
+                    size={220}
+                    level="H"
+                    includeMargin={true}
+                  /> 
+                </div>  
+                {/* QR Instructions */}
+                <p className="text-[10.5px] text-stone-500 font-medium">
+                  Scan with any UPI App (BHIM, PhonePe, Google Pay, Paytm)
+                </p> 
+            </div>
           </div>
 
 
