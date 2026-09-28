@@ -385,7 +385,7 @@ export default function App() {
           )}
 
           {/* Admin Only: Status & Approvals */}
-          {userRole === 'admin' && effectiveTab === 'status-approvals' && (
+          {effectiveTab === 'status-approvals' && (
             <StatusApprovalsView
               registrations={registrations}
               onApprove={handleApprove}
