@@ -284,8 +284,7 @@ export const StatusApprovalsView: React.FC<StatusApprovalsViewProps> = ({
                 <p><strong>Khasra No:</strong> {selectedFarmer.khasraNumber || 'N/A'}</p>
               </div> 
               <div>
-                  <span className="text-stone-500">Status:</span>
-                  <p className="font-mono font-bold text-stone-900">{selectedFarmer.status}</p> 
+               <p className="text-emerald-700 font-bold text-[10.5px]" ><strong>Status:</strong> {selectedFarmer.status} </p> 
               </div>
             </div> 
           </div>

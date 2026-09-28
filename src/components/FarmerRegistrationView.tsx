@@ -700,19 +700,30 @@ export const FarmerRegistrationView: React.FC<FarmerRegistrationViewProps> = ({
                 />
               </div>
 
-              <div>
+             <div>
                 <label className="block text-[11px] font-bold text-stone-700 mb-1">
                   PIN Code (पिन कोड) <span className="text-red-500">*</span>
                 </label>
+
                 <input
                   type="text"
+                  inputMode="numeric"
                   value={formData.pinCode || ''}
-                  onChange={(e) => setFormData({ ...formData, pinCode: e.target.value })}
+                  onChange={(e) => {
+                    const pin = e.target.value
+                      .replace(/\D/g, '')
+                      .slice(0, 6);
+
+                    setFormData({
+                      ...formData,
+                      pinCode: pin,
+                    });
+                  }}
                   placeholder="250342"
                   maxLength={6}
+                  pattern="[0-9]{6}"
                   required
-                  className="w-full bg-stone-50/70 border border-stone-300 rounded px-2.5 py-1.5 text-xs font-semibold text-stone-900 focus:outline-none focus:ring-1 focus:ring-emerald-600 focus:bg-white font-mono"
-                />
+                  className="w-full bg-stone-50/70 border border-stone-300 rounded px-2.5 py-1.5 text-xs font-semibold text-stone-900 focus:outline-none focus:ring-1 focus:ring-emerald-600 focus:bg-white font-mono"/>
               </div>
             </div>
           </div>
