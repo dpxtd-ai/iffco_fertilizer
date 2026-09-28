@@ -218,16 +218,99 @@ export default function App() {
   };
 
   // Handle Admin approving a registration
-  const handleApprove = (id: string) => {
-    const updated = updateFarmerInStorage(id, { status: 'Approved' });
-    setRegistrations(updated);
-    const dynamicKPIs = computeFarmersKPIs(updated);
-    setKpis((prev) => ({
-      ...prev,
-      ...dynamicKPIs,
-    }));
-  };
+    const handleApprove = async (id: string) => {
+      try {
+        // -----------------------------------
+        // 1. Call n8n PATCH API
+        // -----------------------------------
 
+        const response = await fetch(
+          'https://ydnyan0804.app.n8n.cloud/webhook/update-farmer',
+          {
+            method: 'PUT',
+
+            headers: {
+              'Content-Type': 'application/json',
+              'Accept': 'application/json',
+            },
+
+            body: JSON.stringify({
+              registrationId: id,
+              status: 'Approved',
+              biometricVerified: true
+            }),
+          }
+        );
+
+        // -----------------------------------
+        // 2. Read API response
+        // -----------------------------------
+
+        const result = await response.json();
+
+        console.log('Approve API response:', result);
+
+        // -----------------------------------
+        // 3. Check API success
+        // -----------------------------------
+
+        if (!response.ok || result.success !== true) {
+          alert(
+            result?.message ||
+            'Unable to approve farmer.'
+          );
+
+          return;
+        }
+
+        // -----------------------------------
+        // 4. API successful
+        //    Update existing cache/storage
+        // -----------------------------------
+
+        const updated = updateFarmerInStorage(
+          id,
+          {
+            status: 'Approved',
+          }
+        );
+
+        // -----------------------------------
+        // 5. Update React state
+        // -----------------------------------
+
+        setRegistrations(updated);
+
+        // -----------------------------------
+        // 6. Recalculate KPIs
+        // -----------------------------------
+
+        const dynamicKPIs =
+          computeFarmersKPIs(updated);
+
+        setKpis((prev) => ({
+          ...prev,
+          ...dynamicKPIs,
+        }));
+
+        // Optional success message
+        console.log(
+          'Farmer approved successfully:',
+          id
+        );
+
+      } catch (error) {
+
+        console.error(
+          'Error approving farmer:',
+          error
+        );
+
+        alert(
+          'Unable to approve farmer. Please try again.'
+        );
+      }
+    };
   // Handle Admin flagging/rejecting a registration
   const handleReject = (id: string) => {
     const updated = updateFarmerInStorage(id, { status: 'Flagged' });
