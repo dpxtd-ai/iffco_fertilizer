@@ -29,10 +29,10 @@ export const FarmerRegistrationView: React.FC<FarmerRegistrationViewProps> = ({
     quantityBags: 4,
     nanoUreaBottles: 1,
     cropType: 'Sugarcane',
-    landAcres: 1.5,
+    landAcres: 1.0,
     village: '',
-    tehsil: 'Meerut',
-    district: 'Meerut',
+    tehsil: '',
+    district: '',
     state: 'Uttar Pradesh',
     pinCode: '',
     khasraNumber: '',
@@ -88,17 +88,15 @@ export const FarmerRegistrationView: React.FC<FarmerRegistrationViewProps> = ({
       contactNumber: '+91 ',
       pmKisanId: '',
       quantityBags: 2,
-      nanoUreaBottles: 1,
       cropType: 'Wheat / Cereal',
       landAcres: 1.0,
       village: '',
-      tehsil: 'Meerut',
-      district: 'Meerut',
+      tehsil: '',
+      district: '',
       state: 'Uttar Pradesh',
-      pinCode: '250001',
+      pinCode: '',
       khasraNumber: '',
-      biometricVerified: false,
-      otpVerified: false,
+      biometricVerified: false, 
     });
     setErrorMessage('');
   }; 
@@ -141,7 +139,7 @@ export const FarmerRegistrationView: React.FC<FarmerRegistrationViewProps> = ({
 
     const bags = formData.quantityBags || 5;
 
-    const farmerShare = bags * 266.5;
+    const farmerShare = 100.00;
 
     // -----------------------------
     // Generate token
@@ -156,7 +154,6 @@ export const FarmerRegistrationView: React.FC<FarmerRegistrationViewProps> = ({
     // -----------------------------
 
     const newRecord: FarmerRegistration = {
-      id: `FR-${Date.now()}`,
 
       tokenNumber: `UP-MRT-2025-${
         formData.aadhaarNumber?.slice(-4) || randomSuffix
@@ -197,9 +194,6 @@ export const FarmerRegistrationView: React.FC<FarmerRegistrationViewProps> = ({
       quantityBags:
         bags, 
 
-      nanoUreaBottles:
-        formData.nanoUreaBottles || Math.ceil(bags / 4),
-
       cropType:
         formData.cropType || 'Sugarcane',
 
@@ -210,10 +204,10 @@ export const FarmerRegistrationView: React.FC<FarmerRegistrationViewProps> = ({
         formData.village || '',
 
       tehsil:
-        formData.tehsil || 'Meerut',
+        formData.tehsil || '',
 
       district:
-        formData.district || 'Meerut',
+        formData.district || '',
 
       state:
         formData.state || 'Uttar Pradesh',
@@ -228,18 +222,12 @@ export const FarmerRegistrationView: React.FC<FarmerRegistrationViewProps> = ({
         'Pending Verification',
 
       createdAt:
-        'Just now (Operator Submitted)',
-
-      subsidyGovtShare:
-        bags * 2150,
+        'Just now (Operator Submitted)', 
 
       farmerPayable:
         farmerShare,
 
       biometricVerified:
-        false,
-
-      otpVerified:
         false,
 
       counterRef:
@@ -589,18 +577,18 @@ export const FarmerRegistrationView: React.FC<FarmerRegistrationViewProps> = ({
             </div>
           </div>
 
-          {/* Quantity & Subsidy Box */}
-          <div className="bg-[#f7fbf8] border border-emerald-200 rounded-lg p-4 grid grid-cols-1 md:grid-cols-3 gap-4 items-center">
+          {/* Quantity Box */}
+          <div className="bg-[#f7fbf8] border border-emerald-200 rounded-lg p-4">
             {/* Bags Stepper */}
             <div>
-              <label className="block text-xs font-extrabold text-stone-900 mb-1">
+              <label className="block text-xs font-extrabold text-stone-900 mb-1.5">
                 Urea Bags Quantity / यूरिया की मात्रा (45 Kg Bags) <span className="text-red-500">*</span>
               </label>
-              <div>
+              <div className="flex items-center gap-2">
                 <button
                   type="button"
                   onClick={() => handleQuantityChange((formData.quantityBags || 1) - 1)}
-                  className="w-8 h-8 rounded bg-stone-200 hover:bg-stone-300 font-bold text-sm text-stone-800 cursor-pointer flex items-center justify-center"
+                  className="w-8 h-8 rounded bg-stone-200 hover:bg-stone-300 font-bold text-sm text-stone-800 cursor-pointer flex items-center justify-center shrink-0"
                 >
                   -
                 </button>
@@ -616,11 +604,11 @@ export const FarmerRegistrationView: React.FC<FarmerRegistrationViewProps> = ({
                 <button
                   type="button"
                   onClick={() => handleQuantityChange((formData.quantityBags || 1) + 1)}
-                  className="w-8 h-8 rounded bg-stone-200 hover:bg-stone-300 font-bold text-sm text-stone-800 cursor-pointer flex items-center justify-center"
+                  className="w-8 h-8 rounded bg-stone-200 hover:bg-stone-300 font-bold text-sm text-stone-800 cursor-pointer flex items-center justify-center shrink-0"
                 >
                   +
                 </button>
-                <span className="text-xs font-bold text-stone-600">Bags ({ureaBags * 45} Kg)</span>
+                <span className="text-xs font-bold text-stone-600 ml-1">Bags ({ureaBags * 45} Kg)</span>
               </div>
             </div>  
           </div>

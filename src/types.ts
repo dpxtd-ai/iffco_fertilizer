@@ -1,5 +1,5 @@
 export interface FarmerRegistration {
-  id: string;
+  id?: string;
   tokenNumber: string;
   nameAsPerAadhaar: string;
   nameHindi: string;
@@ -12,7 +12,7 @@ export interface FarmerRegistration {
   contactNumber: string;
   pmKisanId: string;
   quantityBags: number; // 45kg bags
-  nanoUreaBottles: number; // 500ml bottles (1:4 ratio)
+  nanoUreaBottles?: number; // 500ml bottles (1:4 ratio)
   cropType: 'Sugarcane' | 'Wheat / Cereal' | 'Paddy' | 'Mustard / Oilseeds' | 'Vegetables';
   landAcres: number;
   village: string;
@@ -23,10 +23,10 @@ export interface FarmerRegistration {
   khasraNumber: string;
   status: 'Approved' | 'Pending Verification' | 'Issued' | 'Flagged';
   createdAt: string;
-  subsidyGovtShare: number; // approx ₹2,150 per bag
+  subsidyGovtShare?: number; // approx ₹2,150 per bag
   farmerPayable: number; // ₹266.50 per bag
   biometricVerified: boolean;
-  otpVerified: boolean;
+  otpVerified?: boolean;
   photoUrl?: string;
   counterRef?: string;
 }

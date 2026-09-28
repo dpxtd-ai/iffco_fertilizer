@@ -247,7 +247,8 @@ export default function App() {
 
   // Complete bag issuance at POS counter
   const handleCompleteIssuance = (farmer: FarmerRegistration, txn: DBTTransaction) => {
-    const updated = updateFarmerInStorage(farmer.id, { status: 'Issued' });
+    const recordId = farmer.id || farmer.tokenNumber;
+    const updated = updateFarmerInStorage(recordId, { status: 'Issued' });
     setRegistrations(updated);
     const dynamicKPIs = computeFarmersKPIs(updated);
 
@@ -270,10 +271,11 @@ export default function App() {
           };
         }
         if (item.sku === 'IFFCO-NANO-500ML') {
+          const nanoCount = farmer.nanoUreaBottles || 0;
           return {
             ...item,
-            stockInHand: Math.max(0, item.stockInHand - farmer.nanoUreaBottles),
-            allocatedToday: item.allocatedToday + farmer.nanoUreaBottles,
+            stockInHand: Math.max(0, item.stockInHand - nanoCount),
+            allocatedToday: item.allocatedToday + nanoCount,
           };
         }
         return item;

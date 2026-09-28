@@ -122,7 +122,7 @@ export const StatusApprovalsView: React.FC<StatusApprovalsViewProps> = ({
             </thead>
             <tbody className="divide-y divide-stone-100">
               {filtered.map((item) => (
-                <tr key={item.id} className="hover:bg-stone-50/70 transition-colors">
+                <tr key={item.id || item.tokenNumber} className="hover:bg-stone-50/70 transition-colors">
                   {/* Token & Time */}
                   <td className="py-3 px-4">
                     <span className="font-mono font-bold text-stone-900 bg-stone-100 px-1.5 py-0.5 rounded text-[11px] block w-fit">
@@ -197,14 +197,14 @@ export const StatusApprovalsView: React.FC<StatusApprovalsViewProps> = ({
                       {item.status === 'Pending Verification' && (
                         <>
                           <button
-                            onClick={() => onApprove(item.id)}
+                            onClick={() => onApprove(item.id || item.tokenNumber)}
                             title="Approve Beneficiary"
                             className="bg-emerald-600 hover:bg-emerald-700 text-white p-1.5 rounded transition-colors cursor-pointer"
                           >
                             <Check className="w-3.5 h-3.5" />
                           </button>
                           <button
-                            onClick={() => onReject(item.id)}
+                            onClick={() => onReject(item.id || item.tokenNumber)}
                             title="Flag / Reject Beneficiary"
                             className="bg-red-600 hover:bg-red-700 text-white p-1.5 rounded transition-colors cursor-pointer"
                           >
