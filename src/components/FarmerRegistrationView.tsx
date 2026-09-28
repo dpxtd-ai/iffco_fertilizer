@@ -159,7 +159,7 @@ export const FarmerRegistrationView: React.FC<FarmerRegistrationViewProps> = ({
 
     const newRecord: FarmerRegistration = {
 
-      tokenNumber: `tkn-2026-${
+      tokenNumber: `TKN-2026-${
         formData.aadhaarNumber?.slice(-4) || randomSuffix
       }-${randomSuffix}`,
 
