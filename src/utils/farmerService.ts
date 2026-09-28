@@ -1,7 +1,7 @@
 import { FarmerRegistration, KendraKPIs } from '../types';
 import defaultFarmersData from '../data/farmers.json';
 
-const WEBHOOK_GET_URL = 'https://ydnyan0804.app.n8n.cloud/webhook-test/farmer';
+const WEBHOOK_GET_URL = 'https://ydnyan0804.app.n8n.cloud/webhook/farmer';
 const STORAGE_KEY_FARMERS = 'pm_kendra_farmers_json';
 
 /**
