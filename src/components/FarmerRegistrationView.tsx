@@ -306,6 +306,7 @@ export const FarmerRegistrationView: React.FC<FarmerRegistrationViewProps> = ({
 
         // Registration successful
         onRegisterSuccess(savedRecord);
+        handleResetForm();
 
         return;
       }

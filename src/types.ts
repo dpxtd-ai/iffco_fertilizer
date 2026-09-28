@@ -35,6 +35,7 @@ export interface KendraKPIs {
   preRegistrationsToday: number;
   ureaIssuedBags: number;
   pendingApprovals: number;
+  approvedCount?: number;
   bufferStockBags: number;
   targetQuotaBags: number;
   consumedQuotaBags: number;

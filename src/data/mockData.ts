@@ -1,16 +1,23 @@
 import { FarmerRegistration, InventoryItem, DBTTransaction, KendraKPIs } from '../types';
+import farmersJsonData from './farmers.json';
+
+export const INITIAL_REGISTRATIONS: FarmerRegistration[] = farmersJsonData as FarmerRegistration[];
+
+const initialPendingCount = INITIAL_REGISTRATIONS.filter((r) => r.status === 'Pending Verification').length;
+const initialApprovedCount = INITIAL_REGISTRATIONS.filter((r) => r.status === 'Approved').length;
+const initialIssuedBags = INITIAL_REGISTRATIONS
+  .filter((r) => r.status === 'Issued')
+  .reduce((acc, r) => acc + (r.quantityBags || 0), 0);
 
 export const INITIAL_KPIS: KendraKPIs = {
-  preRegistrationsToday: 0,
-  ureaIssuedBags: 0,
-  pendingApprovals: 0,
+  preRegistrationsToday: INITIAL_REGISTRATIONS.length,
+  ureaIssuedBags: initialIssuedBags,
+  pendingApprovals: initialPendingCount,
+  approvedCount: initialApprovedCount,
   bufferStockBags: 12400,
   targetQuotaBags: 4000,
-  consumedQuotaBags: 0,
+  consumedQuotaBags: initialIssuedBags,
 };
-
-// Clean state: Zero dummy farmer registrations (ready for new live registrations)
-export const INITIAL_REGISTRATIONS: FarmerRegistration[] = [];
 
 export const INITIAL_INVENTORY: InventoryItem[] = [
   {

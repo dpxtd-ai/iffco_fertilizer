@@ -13,6 +13,7 @@ import { IssuanceCounterView } from './components/IssuanceCounterView';
 import { InventoryDepotView } from './components/InventoryDepotView';
 import { ReportsLogsView } from './components/ReportsLogsView';
 import { OperatorManagementView } from './components/OperatorManagementView';
+import { PaymentModal } from './components/PaymentModal';
 import { TokenModal } from './components/TokenModal';
 import { WipeCacheModal } from './components/WipeCacheModal';
 import { LoginScreen } from './components/LoginScreen';
@@ -20,7 +21,6 @@ import { Footer } from './components/Footer';
 
 import {
   INITIAL_KPIS,
-  INITIAL_REGISTRATIONS,
   INITIAL_INVENTORY,
   INITIAL_DBT_LOGS,
 } from './data/mockData';
@@ -38,6 +38,13 @@ import {
   getInitialOperators,
   saveOperators,
 } from './utils/deviceSecurity';
+import {
+  getStoredFarmers,
+  appendStoredFarmer,
+  updateFarmerInStorage,
+  computeFarmersKPIs,
+  fetchFarmersFromWebhook,
+} from './utils/farmerService';
 
 export default function App() {
   // System NIC Hardware Identifier (MAC Address)
@@ -68,14 +75,26 @@ export default function App() {
 
   const [language, setLanguage] = useState<'en' | 'hi'>('en');
 
-  // Application state (clean records)
-  const [kpis, setKpis] = useState<KendraKPIs>(INITIAL_KPIS);
-  const [registrations, setRegistrations] = useState<FarmerRegistration[]>(INITIAL_REGISTRATIONS);
+  // Application state (JSON-backed records from repo and local cache)
+  const [registrations, setRegistrations] = useState<FarmerRegistration[]>(() => getStoredFarmers());
+  const [kpis, setKpis] = useState<KendraKPIs>(() => {
+    const initialFarmers = getStoredFarmers();
+    const computed = computeFarmersKPIs(initialFarmers);
+    return {
+      ...INITIAL_KPIS,
+      ...computed,
+    };
+  });
   const [inventory, setInventory] = useState<InventoryItem[]>(INITIAL_INVENTORY);
   const [transactions, setTransactions] = useState<DBTTransaction[]>(INITIAL_DBT_LOGS);
 
   // Active modal for newly generated token slip
   const [newlyRegisteredFarmer, setNewlyRegisteredFarmer] = useState<FarmerRegistration | null>(null);
+
+  // Active modal for payment before token issuance
+  const [pendingPaymentFarmer, setPendingPaymentFarmer] = useState<FarmerRegistration | null>(null);
+  const [paymentTxnRef, setPaymentTxnRef] = useState<string>('');
+  const [formResetKey, setFormResetKey] = useState<number>(0);
 
   // Direct hand-off from Status view to Issuance Counter
   const [farmerForIssuance, setFarmerForIssuance] = useState<FarmerRegistration | null>(null);
@@ -132,16 +151,15 @@ export default function App() {
       setOperators(getInitialOperators());
     }
 
-    // Reset runtime application cache & queues
-    setRegistrations([]);
+    // Reset runtime application cache & queues back to JSON default
+    localStorage.removeItem('pm_kendra_farmers_json');
+    const defaults = getStoredFarmers();
+    setRegistrations(defaults);
     setTransactions([]);
+    const dynamicKPIs = computeFarmersKPIs(defaults);
     setKpis({
-      preRegistrationsToday: 0,
-      ureaIssuedBags: 0,
-      pendingApprovals: 0,
-      bufferStockBags: 12400,
-      targetQuotaBags: 4000,
-      consumedQuotaBags: 0,
+      ...INITIAL_KPIS,
+      ...dynamicKPIs,
     });
     setNewlyRegisteredFarmer(null);
     setFarmerForIssuance(null);
@@ -149,34 +167,59 @@ export default function App() {
 
   // Handle successful Kisan registration by Operator
   const handleRegisterSuccess = (farmer: FarmerRegistration) => {
-    setRegistrations((prev) => [farmer, ...prev]);
+    // Add new row into local JSON cache (avoids hitting the API GET endpoint)
+    const updated = appendStoredFarmer(farmer);
+    setRegistrations(updated);
+    const dynamicKPIs = computeFarmersKPIs(updated);
     setKpis((prev) => ({
       ...prev,
-      preRegistrationsToday: prev.preRegistrationsToday + 1,
-      pendingApprovals: prev.pendingApprovals + 1,
+      ...dynamicKPIs,
     }));
-    setNewlyRegisteredFarmer(farmer);
+    // Show payment popup with barcode before displaying the token slip
+    setPendingPaymentFarmer(farmer);
+  };
+
+  // Complete payment and transition to Token Modal
+  const handlePaymentProceed = (txnRef: string) => {
+    setPaymentTxnRef(txnRef);
+    const farmer = pendingPaymentFarmer;
+    setPendingPaymentFarmer(null);
+    if (farmer) {
+      setNewlyRegisteredFarmer(farmer);
+    }
+  };
+
+  // Cancel payment popup
+  const handleCancelPayment = () => {
+    setPendingPaymentFarmer(null);
+  };
+
+  // Close Token Modal and clear/reset the registration form back to initial stage
+  const handleCloseTokenModal = () => {
+    setNewlyRegisteredFarmer(null);
+    setPaymentTxnRef('');
+    setFormResetKey((prev) => prev + 1);
   };
 
   // Handle Admin approving a registration
   const handleApprove = (id: string) => {
-    setRegistrations((prev) =>
-      prev.map((r) => (r.id === id ? { ...r, status: 'Approved' } : r))
-    );
+    const updated = updateFarmerInStorage(id, { status: 'Approved' });
+    setRegistrations(updated);
+    const dynamicKPIs = computeFarmersKPIs(updated);
     setKpis((prev) => ({
       ...prev,
-      pendingApprovals: Math.max(0, prev.pendingApprovals - 1),
+      ...dynamicKPIs,
     }));
   };
 
   // Handle Admin flagging/rejecting a registration
   const handleReject = (id: string) => {
-    setRegistrations((prev) =>
-      prev.map((r) => (r.id === id ? { ...r, status: 'Flagged' } : r))
-    );
+    const updated = updateFarmerInStorage(id, { status: 'Flagged' });
+    setRegistrations(updated);
+    const dynamicKPIs = computeFarmersKPIs(updated);
     setKpis((prev) => ({
       ...prev,
-      pendingApprovals: Math.max(0, prev.pendingApprovals - 1),
+      ...dynamicKPIs,
     }));
   };
 
@@ -188,14 +231,15 @@ export default function App() {
 
   // Complete bag issuance at POS counter
   const handleCompleteIssuance = (farmer: FarmerRegistration, txn: DBTTransaction) => {
-    setRegistrations((prev) =>
-      prev.map((r) => (r.id === farmer.id ? { ...r, status: 'Issued' } : r))
-    );
+    const updated = updateFarmerInStorage(farmer.id, { status: 'Issued' });
+    setRegistrations(updated);
+    const dynamicKPIs = computeFarmersKPIs(updated);
 
     setTransactions((prev) => [txn, ...prev]);
 
     setKpis((prev) => ({
       ...prev,
+      ...dynamicKPIs,
       ureaIssuedBags: prev.ureaIssuedBags + farmer.quantityBags,
       consumedQuotaBags: prev.consumedQuotaBags + farmer.quantityBags,
     }));
@@ -221,7 +265,7 @@ export default function App() {
     );
   };
 
-  // Login handler
+  // Login handler: every login hits https://ydnyan0804.app.n8n.cloud/webhook-test/farmer once
   const handleLoginSuccess = (name: string, role: UserRole) => {
     setIsAuthenticated(true);
     setUserRole(role);
@@ -237,6 +281,18 @@ export default function App() {
     } else {
       setActiveTab('status-approvals');
     }
+
+    // Every login hit once to fetch latest updated records from webhook
+    fetchFarmersFromWebhook().then((res) => {
+      if (res.records && res.records.length > 0) {
+        setRegistrations(res.records);
+        const dynamicKPIs = computeFarmersKPIs(res.records);
+        setKpis((prev) => ({
+          ...prev,
+          ...dynamicKPIs,
+        }));
+      }
+    });
   };
 
   // Logout handler
@@ -304,6 +360,7 @@ export default function App() {
           {/* Operator Only: Kisan Pre-Registration */}
           {userRole === 'operator' && (
             <FarmerRegistrationView
+              key={formResetKey}
               onRegisterSuccess={handleRegisterSuccess}
               language={language}
             />
@@ -360,11 +417,23 @@ export default function App() {
         </div>
       </div>
 
+      {/* Payment Modal popup before landing to Token slip */}
+      {pendingPaymentFarmer && (
+        <PaymentModal
+          farmer={pendingPaymentFarmer}
+          amount={100}
+          onProceed={handlePaymentProceed}
+          onCancel={handleCancelPayment}
+        />
+      )}
+
       {/* Token Modal when farmer completes registration */}
       {newlyRegisteredFarmer && (
         <TokenModal
           farmer={newlyRegisteredFarmer}
-          onClose={() => setNewlyRegisteredFarmer(null)}
+          paidAmount={100}
+          txnReference={paymentTxnRef}
+          onClose={handleCloseTokenModal}
         />
       )}
 

@@ -4,12 +4,15 @@ import { FarmerRegistration } from '../types';
 
 interface TokenModalProps {
   farmer: FarmerRegistration;
+  paidAmount?: number;
+  txnReference?: string;
   onClose: () => void;
-  onProceedToIssue?: (farmer: FarmerRegistration) => void;
 }
 
 export const TokenModal: React.FC<TokenModalProps> = ({
   farmer,
+  paidAmount = 100,
+  txnReference,
   onClose,
 }) => {
   return (
@@ -80,7 +83,7 @@ export const TokenModal: React.FC<TokenModalProps> = ({
             <div>
               <p className="text-[10.5px] text-stone-500 font-medium">Beneficiary Farmer:</p>
               <p className="font-extrabold text-stone-900">{farmer.nameAsPerAadhaar}</p>
-              <p className="text-[11px] text-blue-900 font-semibold">{farmer.nameHindi}</p>
+              {farmer.nameHindi && <p className="text-[11px] text-blue-900 font-semibold">{farmer.nameHindi}</p>}
             </div>
             <div>
               <p className="text-[10.5px] text-stone-500 font-medium">Aadhaar (UIDAI):</p>
@@ -105,10 +108,28 @@ export const TokenModal: React.FC<TokenModalProps> = ({
               <span className="text-stone-800">Neem Coated Urea (45 Kg Bags):</span>
               <span className="text-sm font-extrabold text-[#1b5e20]">{farmer.quantityBags} Bags</span>
             </div>  
-          </div> 
-        </div>
+          </div>
 
-        {/* Add block where shows the barcode for payment and that image read from repo location */}
+          {/* Payment & Approval Status Details */}
+          <div className="border border-emerald-300 bg-emerald-50/70 rounded-md p-3 text-xs space-y-1.5 shadow-2xs">
+            <div className="flex justify-between items-center font-bold">
+              <span className="text-stone-800">Amount Paid (शुल्क भुगतान):</span>
+              <span className="font-extrabold text-[#1b5e20] text-sm">
+                ₹{paidAmount}.00 (PAID)
+              </span>
+            </div>
+            {txnReference && (
+              <div className="flex justify-between items-center text-[11px] text-stone-600">
+                <span className="font-medium">Txn Reference No:</span>
+                <span className="font-mono font-bold text-stone-900">{txnReference}</span>
+              </div>
+            )}
+            <div className="flex items-center gap-1.5 text-[#1b5e20] font-bold text-[11.5px] pt-1 border-t border-emerald-200">
+              <CheckCircle className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
+              <span>Registration Done Successfully - Pending for Approval (पंजीकरण सफलतापूर्वक पूर्ण - अनुमोदन हेतु लंबित)</span>
+            </div>
+          </div>
+        </div>
 
         {/* Modal Footer Actions */}
         <div className="bg-stone-50 px-5 py-3 border-t border-stone-200 flex items-center justify-between gap-3"> 

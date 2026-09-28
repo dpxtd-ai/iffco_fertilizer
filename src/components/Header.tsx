@@ -125,6 +125,10 @@ export const Header: React.FC<HeaderProps> = ({
             <span>
               Pending Approvals: <strong className="text-amber-700 font-bold">{kpis.pendingApprovals}</strong>
             </span> 
+            <span className="text-stone-300">|</span> 
+            <span>
+              Approved: <strong className="text-emerald-700 font-bold">{kpis.approvedCount ?? 0}</strong>
+            </span> 
           </div>
         </div>
 
