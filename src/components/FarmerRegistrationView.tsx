@@ -490,18 +490,43 @@ export const FarmerRegistrationView: React.FC<FarmerRegistrationViewProps> = ({
               <label className="block text-xs font-bold text-stone-800 mb-1">
                 Mobile Number (मोबाइल नंबर) <span className="text-red-500">*</span>
               </label>
-              <div className="w-36 bg-blue-50/70 border border-blue-200/70 rounded px-2.5 py-2 text-xs font-semibold text-blue-950 truncate">
-                  '+91'
+
+              <div className="flex w-full">
+                {/* Country Code */}
+                <div className="flex items-center justify-center w-16 bg-blue-50/70 border border-stone-300 border-r-0 rounded-l px-2 py-2 text-xs font-bold text-blue-950">
+                  +91
+                </div>
+
+                {/* Mobile Number */}
+                <input
+                  type="tel"
+                  inputMode="numeric"
+                  value={formData.contactNumber || ''}
+                  onChange={(e) => {
+                    const mobile = e.target.value
+                      .replace(/\D/g, '')
+                      .slice(0, 10);
+
+                    setFormData({
+                      ...formData,
+                      contactNumber: mobile,
+                    });
+
+                    if (errorMessage) {
+                      setErrorMessage('');
+                    }
+                  }}
+                  placeholder="Enter 10-digit mobile number"
+                  maxLength={10}
+                  pattern="[6-9][0-9]{9}"
+                  required
+                  className="flex-1 min-w-0 bg-stone-50/70 border border-stone-300 rounded-r px-3 py-2 text-xs font-semibold text-stone-900 focus:outline-none focus:ring-1 focus:ring-emerald-600 focus:bg-white font-mono"
+                />
               </div>
-              <input
-                type="tel"
-                value={formData.contactNumber || ''}
-                onChange={(e) => setFormData({ ...formData, contactNumber: e.target.value })}
-                placeholder="Enter 10-digit mobile number (e.g. 9837245812)"
-                required
-                maxLength={10}
-                className="w-full bg-stone-50/70 border border-stone-300 rounded px-3 py-2 text-xs font-semibold text-stone-900 focus:outline-none focus:ring-1 focus:ring-emerald-600 focus:bg-white font-mono"
-              /> 
+
+              <p className="text-[10.5px] text-stone-500 font-medium mt-1">
+                Enter a valid 10-digit mobile number starting with 6, 7, 8, or 9
+              </p>
             </div>
 
             {/* Field 6: PM-Kisan ID */}
