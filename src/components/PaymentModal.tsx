@@ -3,7 +3,6 @@ import {
   X,
   CreditCard,
   CheckCircle2,
-  ShieldCheck,
   AlertCircle
 } from 'lucide-react';
 
@@ -33,8 +32,7 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
 
   const upiId = '8185810817@upi';
   const merchantName = 'Farmer Registration';
-  const narration = `Urea Payment - ${farmer.tokenNumber}`;
-
+  const narration = `Urea Payment - ${farmer.tokenNumber}`; 
   // Dynamic UPI payment URL
     const upiUrl =
       `upi://pay?pa=${encodeURIComponent(upiId)}` +
