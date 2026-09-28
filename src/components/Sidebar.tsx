@@ -66,6 +66,12 @@ export const Sidebar: React.FC<SidebarProps> = ({
       label: 'Kisan Pre-Registration',
       labelHindi: 'कृषक पूर्व-पंजीकरण',
       icon: <Users className="w-4 h-4 shrink-0" />, 
+    },{
+      id: 'status-approvals',
+      label: 'Status & Approvals',
+      labelHindi: 'स्थिति एवं अनुमोदन',
+      icon: <CheckSquare className="w-4 h-4 shrink-0" />,
+      badge: pendingApprovalsCount, 
     },
   ];
 
