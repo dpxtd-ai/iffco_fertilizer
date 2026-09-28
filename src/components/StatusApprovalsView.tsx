@@ -282,13 +282,7 @@ export const StatusApprovalsView: React.FC<StatusApprovalsViewProps> = ({
                 <p><strong>PM-Kisan ID:</strong> {selectedFarmer.pmKisanId || '.............'}</p>
                 <p><strong>Address:</strong> {selectedFarmer.village}, Tehsil {selectedFarmer.tehsil}, {selectedFarmer.district}, {selectedFarmer.pinCode}</p>
                 <p><strong>Land Acreage:</strong> {selectedFarmer.landAcres} Acres ({selectedFarmer.cropType})</p>
-                <p>
-                  <strong>Khasra No:</strong>{" "}
-                  {selectedFarmer.khasraNumber != null &&
-                  String(selectedFarmer.khasraNumber).trim() !== ""
-                    ? selectedFarmer.khasraNumber
-                    : '.............'}
-                </p>
+                <p><strong>Khasra No:</strong> {selectedFarmer.khasraNumber === 'undefined' ? '.............' : selectedFarmer.khasraNumber}</p>
               </div> 
               <div>
                <p className="text-emerald-700 font-bold text-[10.5px]" ><strong>Status:</strong> {selectedFarmer.status} </p> 
