@@ -33,8 +33,7 @@ export const TokenModal: React.FC<TokenModalProps> = ({
           </div>
           <button
             onClick={onClose}
-            className="text-white/80 hover:text-white p-1 rounded-md hover:bg-green-800 transition-colors"
-          >
+            className="text-white/80 hover:text-white p-1 rounded-md hover:bg-green-800 transition-colors">
             <X className="w-5 h-5" />
           </button>
         </div>
@@ -50,7 +49,7 @@ export const TokenModal: React.FC<TokenModalProps> = ({
               IFFCO KENDRA E-TOKEN SLIP
             </h4>
             <p className="text-xs text-stone-600 font-semibold">
-              Kendra: Meerut Depot #104 | Counter: MRT-POS-0419
+              Kendra: MRT-POS-0419
             </p>
           </div>
 
@@ -113,7 +112,7 @@ export const TokenModal: React.FC<TokenModalProps> = ({
           {/* Payment & Approval Status Details */}
           <div className="border border-emerald-300 bg-emerald-50/70 rounded-md p-3 text-xs space-y-1.5 shadow-2xs">
             <div className="flex justify-between items-center font-bold">
-              <span className="text-stone-800">Subsidy: 60% (सब्सिडी)</span>
+              <span className="text-stone-800">Subsidy: 90% (सब्सिडी)</span>
               <span className="text-stone-800">Amount Paid (शुल्क भुगतान):</span> 
               <span className="font-extrabold text-[#1b5e20] text-sm">
                 ₹{paidAmount}.00 (PAID)

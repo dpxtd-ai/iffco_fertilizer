@@ -38,11 +38,11 @@ export function getInitialOperators(): OperatorAccount[] {
       name: 'Sunil Kumar (Kendra Operator)',
       userId: 'operator104@iffco.gov.in',
       password: 'Operator@2025',
-      contactNumber: '+91 94120 44552',
+      contactNumber: '+91 9721682369',
       macAddress: currentMac,
-      counterId: 'Meerut Counter #1 (MRT-POS-0419)',
+      counterId: 'MRT-POS-0419',
       status: 'Active',
-      createdAt: '2025-01-10',
+      createdAt: '2026-01-10',
       lastLogin: 'Active Today',
     } 
   ];

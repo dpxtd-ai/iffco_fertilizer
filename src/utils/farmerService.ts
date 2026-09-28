@@ -86,31 +86,30 @@ export function computeFarmersKPIs(records: FarmerRegistration[]): Pick<KendraKP
  * Normalize an external object from webhook into a strict FarmerRegistration
  */
 function normalizeFarmerRecord(item: Record<string, unknown>, index: number): FarmerRegistration {
-  const rawId = String(item.registrationId || item.id || item._id || item.farmerId || `FR-${Date.now()}-${index}`);
-  const rawToken = String(item.tokenNumber || item.token || item.token_number || `UP-MRT-2025-${Math.floor(1000 + Math.random() * 9000)}`);
-  const rawName = String(item.nameAsPerAadhaar || item.name || item.farmerName || item.farmer_name || 'Kisan Beneficiary');
+  const rawId = String(item.registrationId || item.id || item._id || item.farmerId );
+  const rawToken = String(item.tokenNumber || item.token || item.token_number );
+  const rawName = String(item.nameAsPerAadhaar || item.name || item.farmerName || item.farmer_name );
   const rawHindi = String(item.nameHindi || item.name_hindi || '');
-  const rawAadhaar = String(item.aadhaarNumber || item.aadhaar || item.aadhaar_number || '000000000000');
+  const rawAadhaar = String(item.aadhaarNumber || item.aadhaar || item.aadhaar_number );
   const cleanAadhaar = rawAadhaar.replace(/\s+/g, '');
   const last4 = cleanAadhaar.length >= 4 ? cleanAadhaar.slice(-4) : '0000';
   const rawMasked = String(item.aadhaarMasked || item.aadhaar_masked || `XXXX - XXXX - ${last4}`);
   
   const rawDob = String(item.dob || '1980-01-01');
-  const rawAge = Number(item.age || 45);
+  const rawAge = Number(item.age);
   const rawGender = (['Male', 'Female', 'Other'].includes(String(item.gender)) ? item.gender : 'Male') as 'Male' | 'Female' | 'Other';
   const rawFather = String(item.fatherOrHusbandName || item.father_name || '');
   const rawContact = String(item.contactNumber || item.mobile || item.phone || '');
   const rawPmKisan = String(item.pmKisanId || item.pm_kisan_id || '');
-  const rawBags = Number(item.quantityBags || item.bags || item.quantity || 4);
-  const rawNano = Number(item.nanoUreaBottles || item.nano_urea || Math.ceil(rawBags / 4));
+  const rawBags = Number(item.quantityBags || item.bags || item.quantity); 
   const rawCrop = (['Sugarcane', 'Wheat / Cereal', 'Paddy', 'Mustard / Oilseeds', 'Vegetables'].includes(String(item.cropType)) ? item.cropType : 'Sugarcane') as FarmerRegistration['cropType'];
-  const rawLand = Number(item.landAcres || item.land || 2.0);
-  const rawVillage = String(item.village || 'Meerut');
-  const rawTehsil = String(item.tehsil || 'Meerut');
-  const rawDistrict = String(item.district || 'Meerut');
+  const rawLand = Number(item.landAcres || item.land );
+  const rawVillage = String(item.village );
+  const rawTehsil = String(item.tehsil);
+  const rawDistrict = String(item.district);
   const rawState = String(item.state || 'Uttar Pradesh');
-  const rawPin = String(item.pinCode || item.pincode || '250001');
-  const rawKhasra = String(item.khasraNumber || item.khasra || 'KH-101/1');
+  const rawPin = String(item.pinCode || item.pincode );
+  const rawKhasra = String(item.khasraNumber || item.khasra);
   
   let rawStatus: FarmerRegistration['status'] = 'Pending Verification';
   const incomingStatus = String(item.status || '').trim().toLowerCase();
@@ -125,10 +124,7 @@ function normalizeFarmerRecord(item: Record<string, unknown>, index: number): Fa
   }
 
   const rawCreatedAt = String(item.createdAt || item.created_at || 'Recently Saved');
-  const rawGovtShare = Number(item.subsidyGovtShare || rawBags * 2150);
-  const rawFarmerPayable = Number(item.farmerPayable || rawBags * 266.5);
   const rawBio = Boolean(item.biometricVerified ?? false);
-  const rawOtp = Boolean(item.otpVerified ?? true);
 
   return {
     id: rawId,
@@ -144,7 +140,6 @@ function normalizeFarmerRecord(item: Record<string, unknown>, index: number): Fa
     contactNumber: rawContact,
     pmKisanId: rawPmKisan,
     quantityBags: rawBags,
-    nanoUreaBottles: rawNano,
     cropType: rawCrop,
     landAcres: rawLand,
     village: rawVillage,
@@ -155,11 +150,8 @@ function normalizeFarmerRecord(item: Record<string, unknown>, index: number): Fa
     khasraNumber: rawKhasra,
     status: rawStatus,
     createdAt: rawCreatedAt,
-    subsidyGovtShare: rawGovtShare,
-    farmerPayable: rawFarmerPayable,
     biometricVerified: rawBio,
-    otpVerified: rawOtp,
-    counterRef: String(item.counterRef || 'MRT-POS-0419'),
+    counterRef: String(item.counterRef ),
   };
 }
 

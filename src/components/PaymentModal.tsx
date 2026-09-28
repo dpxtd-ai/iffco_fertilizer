@@ -135,7 +135,7 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
               </span>
 
               <p className="font-semibold text-stone-700 truncate">
-                {farmer.village || 'Meerut'}
+                {farmer.village }
               </p>
             </div>
 

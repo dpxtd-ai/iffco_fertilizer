@@ -34,7 +34,7 @@ export const OperatorManagementView: React.FC<OperatorManagementViewProps> = ({
   const [userId, setUserId] = useState('');
   const [password, setPassword] = useState('Operator@2025');
   const [contactNumber, setContactNumber] = useState('');
-  const [counterId, setCounterId] = useState('Meerut Counter #1 (MRT-POS-0419)');
+  const [counterId, setCounterId] = useState('MRT-POS-0419');
   const [macAddress, setMacAddress] = useState(currentMac);
   const [formError, setFormError] = useState('');
   const [successMsg, setSuccessMsg] = useState('');
@@ -85,8 +85,8 @@ export const OperatorManagementView: React.FC<OperatorManagementViewProps> = ({
       name: name.trim(),
       userId: userId.trim().toLowerCase(),
       password: password.trim() || 'Operator@2025',
-      contactNumber: contactNumber.trim() || '+91 98000 00000',
-      counterId: counterId.trim() || 'Meerut Depot #104',
+      contactNumber: contactNumber.trim() || '+91 9721682369',
+      counterId: counterId.trim() || '#104',
       macAddress: formattedMac,
       status: 'Active',
       lastLogin: 'Never',
@@ -172,8 +172,7 @@ export const OperatorManagementView: React.FC<OperatorManagementViewProps> = ({
             </div>
             <button
               onClick={() => setShowAddForm(false)}
-              className="text-stone-400 hover:text-stone-700 font-bold text-sm"
-            >
+              className="text-stone-400 hover:text-stone-700 font-bold text-sm">
               ×
             </button>
           </div>
@@ -194,7 +193,7 @@ export const OperatorManagementView: React.FC<OperatorManagementViewProps> = ({
                 type="text"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
-                placeholder="e.g. Sunil Kumar"
+                placeholder="e.g. Sudhir Kumar"
                 required
                 className="w-full bg-stone-50 border border-stone-300 rounded px-2.5 py-1.5 text-xs text-stone-900 focus:outline-none focus:ring-1 focus:ring-emerald-600 focus:bg-white"
               />
@@ -208,7 +207,7 @@ export const OperatorManagementView: React.FC<OperatorManagementViewProps> = ({
                 type="text"
                 value={userId}
                 onChange={(e) => setUserId(e.target.value)}
-                placeholder="e.g. operator104@iffco.gov.in"
+                placeholder="e.g. operator id"
                 required
                 className="w-full bg-stone-50 border border-stone-300 rounded px-2.5 py-1.5 text-xs text-stone-900 focus:outline-none focus:ring-1 focus:ring-emerald-600 focus:bg-white"
               />
@@ -222,7 +221,7 @@ export const OperatorManagementView: React.FC<OperatorManagementViewProps> = ({
                 type="text"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                placeholder="Operator@2025"
+                placeholder=""
                 required
                 className="w-full bg-stone-50 border border-stone-300 rounded px-2.5 py-1.5 text-xs font-mono text-stone-900 focus:outline-none focus:ring-1 focus:ring-emerald-600 focus:bg-white"
               />
@@ -249,7 +248,7 @@ export const OperatorManagementView: React.FC<OperatorManagementViewProps> = ({
                 type="text"
                 value={counterId}
                 onChange={(e) => setCounterId(e.target.value)}
-                placeholder="e.g. Meerut Counter #1 (MRT-POS-0419)"
+                placeholder="e.g. MRT-POS-0419"
                 className="w-full bg-stone-50 border border-stone-300 rounded px-2.5 py-1.5 text-xs text-stone-900 focus:outline-none focus:ring-1 focus:ring-emerald-600 focus:bg-white"
               />
             </div>
