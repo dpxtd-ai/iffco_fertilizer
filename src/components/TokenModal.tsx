@@ -116,15 +116,7 @@ export const TokenModal: React.FC<TokenModalProps> = ({
         {/* Add block where shows the barcode for payment and that image read from repo location */}
 
         {/* Modal Footer Actions */}
-        <div className="bg-stone-50 px-5 py-3 border-t border-stone-200 flex items-center justify-between gap-3">
-          <button
-            onClick={handlePrint}
-            className="flex items-center gap-1.5 px-3 py-2 bg-white border border-stone-300 hover:bg-stone-100 rounded-md text-xs font-bold text-stone-700 transition-colors cursor-pointer"
-          >
-            <Printer className="w-3.5 h-3.5 text-stone-600" />
-            <span>Print Token Slip (प्रिंट पर्ची)</span>
-          </button>
-
+        <div className="bg-stone-50 px-5 py-3 border-t border-stone-200 flex items-center justify-between gap-3"> 
           <button
             onClick={onClose}
             className="flex items-center gap-1.5 px-4 py-2 bg-[#1b5e20] hover:bg-[#154919] text-white rounded-md text-xs font-bold transition-colors cursor-pointer shadow-xs"
