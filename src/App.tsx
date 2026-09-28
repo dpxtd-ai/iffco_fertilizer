@@ -70,8 +70,7 @@ export default function App() {
   // Admin only does approval, operator only does farmer registration
   const [activeTab, setActiveTab] = useState<ActiveTab>(() => {
     const savedRole = localStorage.getItem('kendra_role');
-    // return savedRole === 'operator' ? 'farmer-registration' : 'status-approvals';
-    return 'farmer-registration' ;
+    return savedRole === 'operator' ? 'farmer-registration' : 'status-approvals';
   });
 
   const [language, setLanguage] = useState<'en' | 'hi'>('en');
