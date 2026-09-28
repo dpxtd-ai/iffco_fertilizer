@@ -1,12 +1,12 @@
 import React from 'react';
-import { ShieldCheck, PhoneCall, Radio, CheckCircle2, Trash2 } from 'lucide-react';
+import { ShieldCheck, PhoneCall, Radio, CheckCircle2 } from 'lucide-react';
 import { KendraKPIs } from '../types';
 
 interface HeaderProps {
   kpis: KendraKPIs;
   language: 'en' | 'hi';
   onToggleLanguage: () => void;
-  onLogout: () => void;
+  onLogout?: () => void;
   officerName?: string;
   userRole?: 'admin' | 'operator';
   onOpenWipeModal?: () => void;
@@ -16,10 +16,8 @@ export const Header: React.FC<HeaderProps> = ({
   kpis,
   language,
   onToggleLanguage,
-  onLogout,
   officerName = 'Dr. Rajesh Sharma',
   userRole = 'admin',
-  onOpenWipeModal,
 }) => {
   return (
     <header className="w-full bg-white border-b border-stone-200 sticky top-0 z-30 select-none shadow-xs">

@@ -1,5 +1,5 @@
 import React from 'react';
-import { ShieldCheck, PhoneCall, CheckCircle } from 'lucide-react';
+import { ShieldCheck, PhoneCall } from 'lucide-react';
 
 interface RightSidebarProps {
   currentFarmerPhoto?: string;

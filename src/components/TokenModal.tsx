@@ -1,5 +1,5 @@
 import React from 'react';
-import { CheckCircle, Printer, X, ShieldCheck, PlusCircle } from 'lucide-react';
+import { CheckCircle, X, PlusCircle } from 'lucide-react';
 import { FarmerRegistration } from '../types';
 
 interface TokenModalProps {
@@ -11,12 +11,7 @@ interface TokenModalProps {
 export const TokenModal: React.FC<TokenModalProps> = ({
   farmer,
   onClose,
-  onProceedToIssue,
 }) => {
-  const handlePrint = () => {
-    window.print();
-  };
-
   return (
     <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-xs flex items-center justify-center p-4 overflow-y-auto">
       <div className="bg-white rounded-xl shadow-2xl max-w-lg w-full border border-stone-200 overflow-hidden animate-in fade-in zoom-in-95 duration-150">

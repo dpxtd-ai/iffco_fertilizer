@@ -6,10 +6,6 @@ import {
   CheckCircle2, 
   Lock, 
   Trash2, 
-  KeyRound, 
-  Phone, 
-  Building2, 
-  ShieldCheck, 
   Copy, 
   Check,
   AlertCircle

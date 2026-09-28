@@ -6,12 +6,10 @@ import {
   CheckCircle2, 
   AlertTriangle, 
   Trash2, 
-  RefreshCw, 
   Lock, 
   Monitor, 
   Copy, 
   Check, 
-  HelpCircle,
   Database
 } from 'lucide-react';
 import { WhitelistedDevice } from '../types';
@@ -57,14 +55,6 @@ export const DeviceWhitelistView: React.FC<DeviceWhitelistViewProps> = ({
     navigator.clipboard.writeText(currentMac);
     setCopiedMac(true);
     setTimeout(() => setCopiedMac(false), 2000);
-  };
-
-  const handleQuickAddCurrentDevice = () => {
-    setDeviceName('Workstation Admin Terminal');
-    setMacAddress(currentMac);
-    setDeviceType('Admin Terminal');
-    setNotes('Local workstation primary NIC');
-    setShowAddForm(true);
   };
 
   const handleSubmit = (e: React.FormEvent) => {

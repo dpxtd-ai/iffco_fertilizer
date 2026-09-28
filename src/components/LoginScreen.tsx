@@ -7,8 +7,7 @@ import {
   AlertCircle, 
   RefreshCw, 
   PhoneCall, 
-  UserCheck,
-  ShieldAlert
+  UserCheck
 } from 'lucide-react';
 import { OperatorAccount, UserRole } from '../types';
 

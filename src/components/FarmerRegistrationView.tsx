@@ -2,23 +2,17 @@ import React, { useState } from 'react';
 import { 
   CheckCircle2, 
   ShieldCheck, 
-  FileCheck, 
-  RefreshCw, 
-  Truck, 
-  MapPin, 
-  Sparkles,
-  Info
+  MapPin
 } from 'lucide-react';
 import { FarmerRegistration } from '../types';
 
 interface FarmerRegistrationViewProps {
   onRegisterSuccess: (farmer: FarmerRegistration) => void;
-  language: 'en' | 'hi';
+  language?: 'en' | 'hi';
 }
 
 export const FarmerRegistrationView: React.FC<FarmerRegistrationViewProps> = ({
   onRegisterSuccess,
-  language,
 }) => {
   // Clean initial state for new farmer registration
   const [formData, setFormData] = useState<Partial<FarmerRegistration>>({
@@ -147,8 +141,6 @@ export const FarmerRegistrationView: React.FC<FarmerRegistrationViewProps> = ({
 
     const bags = formData.quantityBags || 5;
 
-    const govtShare = bags * 2150;
-
     const farmerShare = bags * 266.5;
 
     // -----------------------------
@@ -173,10 +165,16 @@ export const FarmerRegistrationView: React.FC<FarmerRegistrationViewProps> = ({
       nameAsPerAadhaar:
         formData.nameAsPerAadhaar || 'Kisan Beneficiary',
 
-      nameHindi: formData.nameHindi,
+      nameHindi: formData.nameHindi || '',
 
       aadhaarNumber:
         formData.aadhaarNumber || '',
+
+      aadhaarMasked:
+        formData.aadhaarMasked ||
+        (formData.aadhaarNumber
+          ? `XXXX - XXXX - ${formData.aadhaarNumber.slice(-4)}`
+          : 'XXXX - XXXX - 0000'),
 
       dob:
         formData.dob || '1980-01-01',
@@ -198,6 +196,9 @@ export const FarmerRegistrationView: React.FC<FarmerRegistrationViewProps> = ({
 
       quantityBags:
         bags, 
+
+      nanoUreaBottles:
+        formData.nanoUreaBottles || Math.ceil(bags / 4),
 
       cropType:
         formData.cropType || 'Sugarcane',
@@ -229,10 +230,16 @@ export const FarmerRegistrationView: React.FC<FarmerRegistrationViewProps> = ({
       createdAt:
         'Just now (Operator Submitted)',
 
+      subsidyGovtShare:
+        bags * 2150,
+
       farmerPayable:
         farmerShare,
 
       biometricVerified:
+        false,
+
+      otpVerified:
         false,
 
       counterRef:

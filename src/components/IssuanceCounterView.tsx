@@ -1,15 +1,11 @@
 import React, { useState } from 'react';
 import { 
-  Building2, 
   Search, 
   Fingerprint, 
   CheckCircle2, 
   Printer, 
-  CreditCard, 
-  DollarSign, 
   Package, 
   QrCode, 
-  FileText,
   AlertCircle
 } from 'lucide-react';
 import { FarmerRegistration, DBTTransaction } from '../types';
@@ -90,7 +86,6 @@ export const IssuanceCounterView: React.FC<IssuanceCounterViewProps> = ({
 
   const bags = selectedFarmer?.quantityBags || 5;
   const nanoBags = selectedFarmer?.nanoUreaBottles || 2;
-  const farmerPayable = selectedFarmer?.farmerPayable || 1332.50;
   const govtSubsidy = selectedFarmer?.subsidyGovtShare || 10750;
 
   return (

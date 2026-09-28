@@ -1,4 +1,4 @@
-import { WhitelistedDevice, OperatorAccount } from '../types';
+import { OperatorAccount } from '../types';
 
 const STORAGE_KEY_CURRENT_MAC = 'pm_kendra_client_mac';
 const STORAGE_KEY_OPERATORS = 'pm_kendra_operators_list';

@@ -2,15 +2,12 @@ import React, { useState } from 'react';
 import { 
   ShieldAlert, 
   Lock, 
-  Cpu, 
   CheckCircle2, 
   AlertCircle, 
   KeyRound, 
-  ArrowRight, 
   PhoneCall, 
   RefreshCw 
 } from 'lucide-react';
-import { WhitelistedDevice } from '../types';
 
 interface DeviceBlockedScreenProps {
   detectedMac: string;

@@ -1,13 +1,8 @@
 import React, { useState } from 'react';
 import { 
-  FileText, 
   Download, 
   CheckCircle2, 
-  Search, 
-  Calendar, 
-  FileSpreadsheet, 
-  ShieldCheck, 
-  DollarSign 
+  Search
 } from 'lucide-react';
 import { DBTTransaction } from '../types';
 

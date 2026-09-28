@@ -2,12 +2,8 @@ import React from 'react';
 import { 
   Package, 
   Truck, 
-  TrainTrack, 
   AlertTriangle, 
-  CheckCircle2, 
-  MapPin, 
-  Layers, 
-  TrendingUp 
+  CheckCircle2
 } from 'lucide-react';
 import { InventoryItem } from '../types';
 

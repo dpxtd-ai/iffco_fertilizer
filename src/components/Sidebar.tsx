@@ -7,9 +7,7 @@ import {
   Headphones, 
   LogOut,
   UserCheck,
-  Trash2,
-  Database,
-  ShieldAlert
+  Trash2
 } from 'lucide-react';
 import { ActiveTab, UserRole } from '../types';
 

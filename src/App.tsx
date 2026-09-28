@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Header } from './components/Header';
 import { Sidebar } from './components/Sidebar';
 import { RightSidebar } from './components/RightSidebar';
@@ -37,7 +37,6 @@ import {
   getOrCreateSystemMacAddress,
   getInitialOperators,
   saveOperators,
-  clearAllApplicationCache,
 } from './utils/deviceSecurity';
 
 export default function App() {

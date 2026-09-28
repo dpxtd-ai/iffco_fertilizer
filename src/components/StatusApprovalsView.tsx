@@ -7,11 +7,7 @@ import {
   Eye, 
   Check, 
   X, 
-  Fingerprint, 
-  Filter, 
-  Calendar,
-  MapPin,
-  ChevronRight
+  MapPin
 } from 'lucide-react';
 import { FarmerRegistration } from '../types';
 
@@ -47,7 +43,6 @@ export const StatusApprovalsView: React.FC<StatusApprovalsViewProps> = ({
 
   const pendingCount = registrations.filter((r) => r.status === 'Pending Verification').length;
   const approvedCount = registrations.filter((r) => r.status === 'Approved').length;
-  const flaggedCount = registrations.filter((r) => r.status === 'Flagged').length;
 
   return (
     <div className="space-y-4">
@@ -200,13 +195,22 @@ export const StatusApprovalsView: React.FC<StatusApprovalsViewProps> = ({
                   <td className="py-3 px-4 text-right">
                     <div className="flex items-center justify-end gap-1.5">
                       {item.status === 'Pending Verification' && (
-                        <button
-                          onClick={() => onApprove(item.id)}
-                          title="Approve Beneficiary"
-                          className="bg-emerald-600 hover:bg-emerald-700 text-white p-1.5 rounded transition-colors cursor-pointer"
-                        >
-                          <Check className="w-3.5 h-3.5" />
-                        </button>
+                        <>
+                          <button
+                            onClick={() => onApprove(item.id)}
+                            title="Approve Beneficiary"
+                            className="bg-emerald-600 hover:bg-emerald-700 text-white p-1.5 rounded transition-colors cursor-pointer"
+                          >
+                            <Check className="w-3.5 h-3.5" />
+                          </button>
+                          <button
+                            onClick={() => onReject(item.id)}
+                            title="Flag / Reject Beneficiary"
+                            className="bg-red-600 hover:bg-red-700 text-white p-1.5 rounded transition-colors cursor-pointer"
+                          >
+                            <X className="w-3.5 h-3.5" />
+                          </button>
+                        </>
                       )}
 
                       {item.status === 'Approved' && (
