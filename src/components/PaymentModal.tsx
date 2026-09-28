@@ -145,7 +145,7 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
                 FEE PAYABLE / कुल देय राशि
               </span>
 
-              <p className="font-semibold text-stone-700 truncate">
+              <p className="font-bold text-[#1b5e20]">
                 ₹{Number(amount).toFixed(2)}
               </p>
             </div>
