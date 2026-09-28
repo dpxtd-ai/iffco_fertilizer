@@ -37,7 +37,8 @@ export const StatusApprovalsView: React.FC<StatusApprovalsViewProps> = ({
       item.contactNumber.includes(searchTerm);
 
     const matchesStatus = statusFilter === 'All' || item.status === statusFilter;
-
+    console.log(item.village)
+    console.log(item.tokenNumber)
     return matchesSearch && matchesStatus;
   });
 
