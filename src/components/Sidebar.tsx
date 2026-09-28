@@ -140,7 +140,8 @@ export const Sidebar: React.FC<SidebarProps> = ({
         </nav>
 
         {/* Admin Only: Wipe Cache and System Temp Data Control */}
-        {userRole === 'admin' && onOpenWipeModal && (
+        // {userRole === 'admin' && onOpenWipeModal && (
+        { onOpenWipeModal && (
           <div className="mt-5 pt-4 border-t border-stone-200"> 
               <button
                 type="button"

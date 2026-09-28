@@ -339,12 +339,9 @@ export default function App() {
 
   // Operator is strictly locked to Kisan Registration only
   // Admin cannot do Kisan Registration
-  // const effectiveTab: ActiveTab =
-  //   userRole === 'operator' ? 'farmer-registration'
-  //     : activeTab === 'farmer-registration'
-  //       ? 'status-approvals'
-  //       : activeTab;
-    const effectiveTab: ActiveTab = activeTab === 'farmer-registration'
+  const effectiveTab: ActiveTab =
+    userRole === 'operator' ? 'farmer-registration'
+      : activeTab === 'farmer-registration'
         ? 'status-approvals'
         : activeTab;
 
