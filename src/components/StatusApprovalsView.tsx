@@ -283,6 +283,10 @@ export const StatusApprovalsView: React.FC<StatusApprovalsViewProps> = ({
                 <p><strong>Land Acreage:</strong> {selectedFarmer.landAcres} Acres ({selectedFarmer.cropType})</p>
                 <p><strong>Khasra No:</strong> {selectedFarmer.khasraNumber || 'N/A'}</p>
               </div> 
+              <div>
+                  <span className="text-stone-500">Status:</span>
+                  <p className="font-mono font-bold text-stone-900">{selectedFarmer.status}</p> 
+              </div>
             </div> 
           </div>
         </div>
