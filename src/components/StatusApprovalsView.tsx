@@ -278,11 +278,17 @@ export const StatusApprovalsView: React.FC<StatusApprovalsViewProps> = ({
               <div className="space-y-1">
                 <p><strong>Mobile:</strong> {selectedFarmer.contactNumber}</p>
                 <p><strong>DOB / Age:</strong> {selectedFarmer.dob} ({selectedFarmer.age} Years)</p>
-                <p><strong>Father/Husband:</strong> {selectedFarmer.fatherOrHusbandName || '-'}</p>
-                <p><strong>PM-Kisan ID:</strong> {selectedFarmer.pmKisanId || '-'}</p>
+                <p><strong>Father/Husband:</strong> {selectedFarmer.fatherOrHusbandName || '.............'}</p>
+                <p><strong>PM-Kisan ID:</strong> {selectedFarmer.pmKisanId || '.............'}</p>
                 <p><strong>Address:</strong> {selectedFarmer.village}, Tehsil {selectedFarmer.tehsil}, {selectedFarmer.district}, {selectedFarmer.pinCode}</p>
                 <p><strong>Land Acreage:</strong> {selectedFarmer.landAcres} Acres ({selectedFarmer.cropType})</p>
-                <p><strong>Khasra No:</strong> {selectedFarmer.khasraNumber || '-'}</p>
+                <p>
+                  <strong>Khasra No:</strong>{" "}
+                  {selectedFarmer.khasraNumber != null &&
+                  String(selectedFarmer.khasraNumber).trim() !== ""
+                    ? selectedFarmer.khasraNumber
+                    : '.............'}
+                </p>
               </div> 
               <div>
                <p className="text-emerald-700 font-bold text-[10.5px]" ><strong>Status:</strong> {selectedFarmer.status} </p> 
