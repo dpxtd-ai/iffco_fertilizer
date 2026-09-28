@@ -160,23 +160,10 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
 
           <div className="border-2 border-emerald-300/80 bg-emerald-50/40 rounded-xl p-4 text-center space-y-3">
 
-            {/* UPI QR Container */}
-            <div className="max-w-xs mx-auto shadow-sm rounded-xl overflow-hidden bg-white border border-stone-200 p-4">
+            // {/* UPI QR Container */}
+            // <div className="max-w-xs mx-auto shadow-sm rounded-xl overflow-hidden bg-white border border-stone-200 p-4">
 
-              {/* QR Header */}
-              <div className="text-center mb-3">
-
-                <p className="text-sm font-extrabold text-[#1b5e20]">
-                  BHIM UPI / UPI Payment
-                </p>
-
-                <p className="text-xs text-stone-500 mt-1">
-                  Scan to pay ₹{Number(amount).toFixed(2)}
-                </p>
-
-              </div>
-
-
+              
               {/* REAL DYNAMIC UPI QR CODE */}
               <div className="flex justify-center bg-white p-2 rounded-lg">
 
@@ -187,33 +174,9 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
                   includeMargin={true}
                 />
 
-              </div>
+              </div>  
 
-
-              {/* UPI ID */}
-              <div className="text-center mt-3">
-
-                <p className="text-[10px] text-stone-500 uppercase font-bold">
-                  UPI ID
-                </p>
-
-                <p className="text-sm font-bold text-stone-700">
-                  {upiId}
-                </p>
-
-              </div>
-
-
-              {/* Amount */}
-              <div className="mt-2 text-center">
-
-                <span className="inline-block bg-emerald-50 text-[#1b5e20] px-3 py-1 rounded-full text-xs font-extrabold">
-                  ₹{Number(amount).toFixed(2)}
-                </span>
-
-              </div>
-
-            </div>
+            // </div>
 
 
             {/* QR Instructions */}
