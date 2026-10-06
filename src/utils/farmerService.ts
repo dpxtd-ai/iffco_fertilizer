@@ -150,8 +150,9 @@ function normalizeFarmerRecord(item: Record<string, unknown>, index: number): Fa
     khasraNumber: rawKhasra,
     status: rawStatus,
     createdAt: rawCreatedAt,
+    farmerPayable: Number(item.farmerPayable || 100),
     biometricVerified: rawBio,
-    counterRef: String(item.counterRef ),
+    counterRef: String(item.counterRef || 'MRT-POS-0419'),
   };
 }
 

@@ -18,6 +18,7 @@ import { TokenModal } from './components/TokenModal';
 import { WipeCacheModal } from './components/WipeCacheModal';
 import { LoginScreen } from './components/LoginScreen';
 import { Footer } from './components/Footer';
+import { OfflineIndicator } from './components/OfflineIndicator';
 
 import {
   INITIAL_KPIS,
@@ -547,6 +548,9 @@ export default function App() {
           officerName={officerName}
         />
       )}
+
+      {/* Offline Connectivity Status Badge */}
+      <OfflineIndicator />
 
       {/* Footer bar */}
       <Footer />

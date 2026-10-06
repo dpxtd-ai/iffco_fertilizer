@@ -8,6 +8,7 @@ import { FarmerRegistration, DBTTransaction } from '../types';
 interface IssuanceCounterViewProps {
   initialFarmer?: FarmerRegistration | null; 
   availableRegistrations: FarmerRegistration[];
+  onCompleteIssuance?: (farmer: FarmerRegistration, transaction: DBTTransaction) => void;
 }
 
 export const IssuanceCounterView: React.FC<IssuanceCounterViewProps> = ({
@@ -34,7 +35,6 @@ export const IssuanceCounterView: React.FC<IssuanceCounterViewProps> = ({
 
     if (found) {
       setSelectedFarmer(found);
-      setIsFingerprintScanned(false);
     } else {
       alert('No matching pre-registration found with that Token or Aadhaar number.');
     }

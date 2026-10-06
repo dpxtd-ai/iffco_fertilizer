@@ -24,7 +24,7 @@ export interface FarmerRegistration {
   status: 'Approved' | 'Pending Verification' | 'Issued' | 'Flagged';
   createdAt: string;
   subsidyGovtShare?: number; // approx ₹2,150 per bag
-  farmerPayable: number; // ₹266.50 per bag
+  farmerPayable?: number; // ₹266.50 per bag or ₹100 registration fee
   biometricVerified: boolean;
   otpVerified?: boolean;
   photoUrl?: string;

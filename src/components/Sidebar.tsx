@@ -10,6 +10,7 @@ import {
   Trash2
 } from 'lucide-react';
 import { ActiveTab, UserRole } from '../types';
+import { PWAInstallButton } from './PWAInstallButton';
 
 interface SidebarProps {
   activeTab: ActiveTab;
@@ -154,8 +155,11 @@ export const Sidebar: React.FC<SidebarProps> = ({
         )} 
       </div>
 
-      {/* Bottom info & Logout */}
-      <div className="space-y-3 pt-4 border-t border-stone-200">
+      {/* Bottom info, PWA Install & Logout */}
+      <div className="space-y-2.5 pt-3 border-t border-stone-200">
+        {/* PWA In-App Install prompt in sidebar */}
+        <PWAInstallButton variant="sidebar" />
+
         {/* District Help Badge */}
         <div className="bg-[#eff7f0] border border-emerald-200/80 rounded-md p-3 flex items-center gap-3">
           <div className="w-7 h-7 rounded-full bg-emerald-100 flex items-center justify-center text-emerald-800 shrink-0">

@@ -1,6 +1,7 @@
 import React from 'react';
 import { ShieldCheck, PhoneCall, Radio, CheckCircle2 } from 'lucide-react';
 import { KendraKPIs } from '../types';
+import { PWAInstallButton } from './PWAInstallButton';
 
 interface HeaderProps {
   kpis: KendraKPIs;
@@ -85,8 +86,10 @@ export const Header: React.FC<HeaderProps> = ({
           </div>
         </div>
 
-        {/* Right Officer Profile */}
-        <div className="flex items-center gap-3">
+        {/* Right Officer Profile & PWA Install */}
+        <div className="flex items-center gap-2.5">
+          <PWAInstallButton variant="header" />
+
           <div className="flex items-center gap-2.5 bg-stone-50 border border-stone-200/80 rounded-lg px-3 py-1.5 shadow-2xs">
             <div className="relative">
               <img
