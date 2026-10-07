@@ -10,6 +10,7 @@ import {
   UserCheck
 } from 'lucide-react';
 import { OperatorAccount, UserRole } from '../types';
+import { PWAInstallButton } from './PWAInstallButton';
 
 interface LoginScreenProps {
   onLoginSuccess: (officerName: string, role: UserRole) => void;
@@ -128,6 +129,8 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({
           </span>
           <span>|</span>
           <span className="text-green-200">DBT Kendra Gateway v4.3</span>
+          <span>|</span>
+          <PWAInstallButton variant="login-header" />
         </div>
       </div>
 
@@ -286,6 +289,9 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({
               </button>
             </form>
           </div>
+
+          {/* PWA App Install Banner for Direct 1-Click Access */}
+          <PWAInstallButton variant="banner" />
 
           {/* System Hardware MAC Info */}
           <div className="flex items-center justify-center text-[11px] text-stone-500 pt-1">
