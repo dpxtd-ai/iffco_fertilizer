@@ -63,38 +63,7 @@ export const PWAInstallButton: React.FC<PWAInstallButtonProps> = ({ variant = 'h
           <span>Download App / ऐप इंस्टॉल</span>
         </button>
       );
-    }
-
-    if (variant === 'banner') {
-      return (
-        <div className="bg-gradient-to-r from-emerald-50 to-green-50/80 border border-emerald-300 rounded-xl p-3 shadow-xs">
-          <div className="flex items-center justify-between gap-3">
-            <div className="flex items-center gap-2.5">
-              <div className="w-9 h-9 rounded-lg bg-[#136a28] flex items-center justify-center text-white shrink-0 shadow-2xs">
-                <Download className="w-4 h-4 text-emerald-200" />
-              </div>
-              <div>
-                <p className="text-xs font-extrabold text-[#14532d] leading-tight">
-                  Install Portal as Progressive Web App (PWA)
-                </p>
-                <p className="text-[10.5px] text-stone-600 font-medium">
-                  ऑफ़लाइन सुविधा एवं तीव्र एक्सेस हेतु डेस्कटॉप / मोबाइल पर इंस्टॉल करें
-                </p>
-              </div>
-            </div>
-
-            <button
-              type="button"
-              onClick={handleClick}
-              className="shrink-0 flex items-center gap-1.5 bg-[#1b5e20] hover:bg-[#144919] text-white px-3 py-1.5 rounded-lg text-xs font-bold transition-all shadow-xs cursor-pointer"
-            >
-              <Download className="w-3.5 h-3.5 text-emerald-300" />
-              <span>Install App</span>
-            </button>
-          </div>
-        </div>
-      );
-    }
+    } 
 
     // Default: 'header' variant
     return (
